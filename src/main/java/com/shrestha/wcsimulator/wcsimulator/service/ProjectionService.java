@@ -74,6 +74,22 @@ public class ProjectionService {
                     .collect(Collectors.toList());
         }
 
+    public PairingView toPairingView(KnockoutMatch m, Map<String, List<String>> orderedGroups) {
+        Team ht = projectedTeamForSlot(m.getHomeSlot(), orderedGroups);
+        Team at = projectedTeamForSlot(m.getAwaySlot(), orderedGroups);
+        if (ht != null && at != null && equalsIgnoreCase(ht.getName(), at.getName())) {
+            return null;
+        }
+        String h = labelWithRank(nameOf(ht));
+        String a = labelWithRank(nameOf(at));
+        int hr = rankProvider.rankOf(ht == null ? null : ht.getName());
+        int ar = rankProvider.rankOf(at == null ? null : at.getName());
+        double avg = (hr + ar) / 2.0;
+        String hOrigin = projectedOriginSlot(m.getHomeSlot(), orderedGroups, ht);
+        String aOrigin = projectedOriginSlot(m.getAwaySlot(), orderedGroups, at);
+        return new PairingView(h, a, hOrigin, aOrigin, m.getStage(), m.getDate(), m.getCity(), avg, m.getMatchId());
+    }
+
     private String nameOf(Team t) { return t == null ? "TBD" : t.getName(); }
     private String labelWithRank(String name) {
         int r = rankProvider.rankOf(name);

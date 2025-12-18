@@ -50,7 +50,23 @@ public class SimulatorController {
             }
         }
 
-        List<PairingView> projected = projectionService.projectedPairingsForVenue(city, ordered);
+        List<PairingView> projected;
+        if ("All Cities".equalsIgnoreCase(city)) {
+            // Get all matches across all cities
+            projected = knockoutProvider.matches().stream()
+                    .map(m -> projectionService.toPairingView(m, ordered))
+                    .filter(Objects::nonNull)
+                    .sorted((p1, p2) -> {
+                        int so1 = stageOrder(p1.getStage());
+                        int so2 = stageOrder(p2.getStage());
+                        int cmp = Integer.compare(so1, so2);
+                        if (cmp != 0) return cmp;
+                        return Integer.compare(p1.getMatchId(), p2.getMatchId());
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            projected = projectionService.projectedPairingsForVenue(city, ordered);
+        }
         model.addAttribute("groups", ordered);
         model.addAttribute("cities", cities());
         model.addAttribute("selectedCity", city);
@@ -59,10 +75,27 @@ public class SimulatorController {
     }
 
     private List<String> cities() {
-        return knockoutProvider.matches().stream()
+        List<String> allCities = knockoutProvider.matches().stream()
                 .map(m -> m.getCity())
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
+        // Add "All Cities" at the beginning
+        List<String> result = new ArrayList<>(allCities);
+        result.add(0, "All Cities");
+        return result;
+    }
+
+    private int stageOrder(String stage) {
+        if (stage == null) return 99;
+        switch (stage) {
+            case "Round of 32": return 1;
+            case "Round of 16": return 2;
+            case "Quarterfinal": return 3;
+            case "Semifinal": return 4;
+            case "Third Place": return 5;
+            case "Final": return 6;
+            default: return 98;
+        }
     }
 }
