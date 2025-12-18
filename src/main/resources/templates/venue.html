@@ -1,198 +1,400 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <body style="font-family: system-ui, sans-serif; margin: 24px">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      table {
-        border-collapse: collapse;
-        width: 100%;
-        margin: 12px 0;
+      :root {
+        --bg: linear-gradient(135deg, #0f172a, #0b3a5c);
+        --panel: #0f172a;
+        --card: #0f172a;
+        --surface: #0b1220;
+        --muted: #94a3b8;
+        --text: #e5e7eb;
+        --accent: #22d3ee;
+        --accent-2: #f59e0b;
+        --border: rgba(255, 255, 255, 0.08);
+        --shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
       }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Manrope", "Helvetica Neue", sans-serif;
+        display: flex;
+        justify-content: center;
+        padding: 28px 18px;
+      }
+
+      .shell {
+        width: min(1200px, 100%);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 28px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      .title {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: -0.2px;
+      }
+
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+        max-width: 760px;
+      }
+
+      .chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .filters {
+        margin: 12px 0 18px;
+        background: var(--surface);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        padding: 14px 16px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        align-items: end;
+      }
+
+      label {
+        font-weight: 700;
+        font-size: 13px;
+        color: #cbd5e1;
+      }
+
+      select {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.25);
+      }
+
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 11px 14px;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(120deg, var(--accent), #1ea6c8);
+        color: #0b1220;
+        box-shadow: 0 8px 18px rgba(34, 211, 238, 0.28);
+      }
+
+      .sections {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+      }
+
+      .card h3 {
+        margin: 0 0 10px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
       th,
       td {
-        border: 1px solid #ddd;
-        padding: 8px;
-      }
-      th {
-        background: #f4f6f8;
+        padding: 10px;
+        border-bottom: 1px solid var(--border);
         text-align: left;
-        font-weight: 600;
       }
-      h2,
-      h3 {
-        margin-top: 24px;
+
+      th {
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.03);
+        position: sticky;
+        top: 0;
       }
-      .pairing-row {
-        transition: background-color 0.15s ease;
+
+      tr:nth-child(even) {
+        background: rgba(255, 255, 255, 0.02);
       }
+
       .pairing-row:hover {
-        background-color: #f9fafb;
+        background: rgba(34, 211, 238, 0.05);
       }
-      .filter-panel {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        padding: 12px;
-        margin: 12px 0;
-        display: grid;
-        grid-template-columns: auto auto auto 1fr auto;
-        gap: 12px;
+
+      .meta {
+        display: flex;
+        gap: 10px;
         align-items: center;
+        color: var(--muted);
+        font-size: 13px;
       }
-      .filter-panel select,
-      .filter-panel input {
-        padding: 6px 8px;
-        border: 1px solid #d1d5db;
-        border-radius: 4px;
-        font-size: 14px;
+
+      .back {
+        margin-top: 14px;
+        display: inline-block;
+        color: var(--accent);
+        font-weight: 700;
+        text-decoration: none;
       }
-      .filter-panel label {
-        font-weight: 600;
-        font-size: 14px;
-      }
-      .filter-stats {
+
+      .badge {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(34, 211, 238, 0.12);
+        color: var(--accent);
+        border: 1px solid rgba(34, 211, 238, 0.4);
+        font-weight: 700;
         font-size: 12px;
-        color: #6b7280;
+      }
+
+      @media (max-width: 960px) {
+        .sections {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
-    <h2 th:text="${'Matches in ' + city}"></h2>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="header">
+        <div class="title">
+          <div class="badge">Venue overview</div>
+          <h1 th:text="${'Matches in ' + city}"></h1>
+          <p class="lead">
+            Filter by stage and spotlight top-ranked or South American teams.
+            Sorted by lowest average FIFA rank first.
+          </p>
+          <div class="chips">
+            <div class="chip">
+              Stage:
+              <span
+                th:text="${stageFilter == null || stageFilter == '' ? 'All' : stageFilter}"
+              ></span>
+            </div>
+            <div class="chip">
+              Team filter: <span th:text="${teamFilter}"></span>
+            </div>
+            <div class="chip" th:text="${#lists.size(pairings)} + ' matchups'">
+              matchups
+            </div>
+          </div>
+        </div>
+        <a class="back" href="/">← Back to home</a>
+      </div>
 
-    <div class="filter-panel">
-      <form action="/venue" method="get" style="display: contents">
+      <form action="/venue" method="get" class="filters">
         <input type="hidden" name="city" th:value="${city}" />
-        <label>Stage</label>
-        <select name="stage" th:value="${stageFilter}">
-          <option
-            value=""
-            th:selected="${stageFilter == null || stageFilter == ''}"
-          >
-            All
-          </option>
-          <option
-            value="Round of 32"
-            th:selected="${stageFilter == 'Round of 32'}"
-          >
-            Round of 32
-          </option>
-          <option
-            value="Round of 16"
-            th:selected="${stageFilter == 'Round of 16'}"
-          >
-            Round of 16
-          </option>
-          <option
-            value="Quarterfinal"
-            th:selected="${stageFilter == 'Quarterfinal'}"
-          >
-            Quarterfinal
-          </option>
-          <option value="Semifinal" th:selected="${stageFilter == 'Semifinal'}">
-            Semifinal
-          </option>
-          <option
-            value="Third Place"
-            th:selected="${stageFilter == 'Third Place'}"
-          >
-            Third Place
-          </option>
-          <option value="Final" th:selected="${stageFilter == 'Final'}">
-            Final
-          </option>
-        </select>
-
-        <label>Teams</label>
-        <select name="teamFilter" th:value="${teamFilter}">
-          <option
-            value="qualifying"
-            th:selected="${teamFilter == 'qualifying'}"
-          >
-            Show all qualifying (Top 12 or South American)
-          </option>
-          <option value="top12" th:selected="${teamFilter == 'top12'}">
-            Only show Top 12 teams
-          </option>
-          <option
-            value="south_american"
-            th:selected="${teamFilter == 'south_american'}"
-          >
-            Only show South American teams
-          </option>
-          <option value="all" th:selected="${teamFilter == 'all'}">
-            Show all matches
-          </option>
-        </select>
-
-        <button type="submit" style="padding: 6px 12px; cursor: pointer">
-          Filter
-        </button>
+        <div>
+          <label for="stage">Stage</label>
+          <select name="stage" id="stage" th:value="${stageFilter}">
+            <option
+              value=""
+              th:selected="${stageFilter == null || stageFilter == ''}"
+            >
+              All
+            </option>
+            <option
+              value="Round of 32"
+              th:selected="${stageFilter == 'Round of 32'}"
+            >
+              Round of 32
+            </option>
+            <option
+              value="Round of 16"
+              th:selected="${stageFilter == 'Round of 16'}"
+            >
+              Round of 16
+            </option>
+            <option
+              value="Quarterfinal"
+              th:selected="${stageFilter == 'Quarterfinal'}"
+            >
+              Quarterfinal
+            </option>
+            <option
+              value="Semifinal"
+              th:selected="${stageFilter == 'Semifinal'}"
+            >
+              Semifinal
+            </option>
+            <option
+              value="Third Place"
+              th:selected="${stageFilter == 'Third Place'}"
+            >
+              Third Place
+            </option>
+            <option value="Final" th:selected="${stageFilter == 'Final'}">
+              Final
+            </option>
+          </select>
+        </div>
+        <div>
+          <label for="teams">Teams</label>
+          <select name="teamFilter" id="teams" th:value="${teamFilter}">
+            <option
+              value="qualifying"
+              th:selected="${teamFilter == 'qualifying'}"
+            >
+              Show all qualifying (Top 12 or South American)
+            </option>
+            <option value="top12" th:selected="${teamFilter == 'top12'}">
+              Only show Top 12 teams
+            </option>
+            <option
+              value="south_american"
+              th:selected="${teamFilter == 'south_american'}"
+            >
+              Only show South American teams
+            </option>
+            <option value="all" th:selected="${teamFilter == 'all'}">
+              Show all matches
+            </option>
+          </select>
+        </div>
+        <div style="align-self: center">
+          <button type="submit" class="btn">Apply filters</button>
+        </div>
       </form>
-      <span
-        class="filter-stats"
-        th:text="${#lists.size(pairings)} + ' matchups'"
-      ></span>
+
+      <div class="sections">
+        <div class="card">
+          <h3>Scheduled knockout matches</h3>
+          <table>
+            <tr>
+              <th>ID</th>
+              <th>Stage</th>
+              <th>Date</th>
+              <th>Home Slot</th>
+              <th>Away Slot</th>
+            </tr>
+            <tr th:each="m : ${matches}">
+              <td th:text="${m.matchId}"></td>
+              <td th:text="${m.stage}"></td>
+              <td th:text="${m.date}"></td>
+              <td th:text="${m.homeSlot}"></td>
+              <td th:text="${m.awaySlot}"></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3 th:text="${'Possible teams in ' + city}"></h3>
+          <div class="meta" th:if="${teams != null && !#lists.isEmpty(teams)}">
+            <span
+              th:text="${#lists.size(teams)} + ' unique teams could appear here'"
+            ></span>
+          </div>
+          <div
+            class="chips"
+            style="margin-top: 12px"
+            th:if="${teams != null && !#lists.isEmpty(teams)}"
+          >
+            <div class="chip" th:each="t : ${teams}" th:text="${t.name}"></div>
+          </div>
+          <div th:if="${teams == null || #lists.isEmpty(teams)}" class="meta">
+            No data available
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 16px">
+        <div class="header" style="margin: 0 0 10px; padding: 0">
+          <div>
+            <h3 style="margin: 0">Possible matchups</h3>
+            <p class="lead" style="margin-top: 4px">
+              Sorted by strongest average rank first.
+            </p>
+          </div>
+          <div
+            class="chip"
+            th:text="${#lists.size(pairings)} + ' matchups shown'"
+          ></div>
+        </div>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Stage</th>
+            <th>Date</th>
+            <th>Home</th>
+            <th>Home Slot</th>
+            <th>Away</th>
+            <th>Away Slot</th>
+            <th>Avg Rank</th>
+          </tr>
+          <tr th:each="p : ${pairings}" class="pairing-row">
+            <td th:text="${p.matchId}"></td>
+            <td th:text="${p.stage}"></td>
+            <td th:text="${p.date}"></td>
+            <td th:text="${p.home}"></td>
+            <td th:text="${p.homeSlot}"></td>
+            <td th:text="${p.away}"></td>
+            <td th:text="${p.awaySlot}"></td>
+            <td th:text="${#numbers.formatDecimal(p.avgRank, 1, 1)}"></td>
+          </tr>
+        </table>
+      </div>
     </div>
-
-    <table border="1">
-      <tr>
-        <th>Match ID</th>
-        <th>Stage</th>
-        <th>Date</th>
-        <th>Home Slot</th>
-        <th>Away Slot</th>
-      </tr>
-
-      <tr th:each="m : ${matches}">
-        <td th:text="${m.matchId}"></td>
-        <td th:text="${m.stage}"></td>
-        <td th:text="${m.date}"></td>
-        <td th:text="${m.homeSlot}"></td>
-        <td th:text="${m.awaySlot}"></td>
-      </tr>
-    </table>
-
-    <h3 th:text="${'Possible Teams in ' + city}"></h3>
-    <ul>
-      <li th:each="t : ${teams}" th:text="${t.name}"></li>
-      <li th:if="${teams == null || #lists.isEmpty(teams)}">
-        No data available
-      </li>
-    </ul>
-
-    <h3>Possible Matchups</h3>
-    <div style="margin: 12px 0">
-      <span
-        class="filter-stats"
-        th:text="${#lists.size(pairings)} + ' matchups shown'"
-      ></span>
-    </div>
-    <table border="1">
-      <tr>
-        <th>Match ID</th>
-        <th>Stage</th>
-        <th>Date</th>
-        <th>City</th>
-        <th>Home</th>
-        <th>Home Slot</th>
-        <th>Away</th>
-        <th>Away Slot</th>
-        <th>Avg Rank</th>
-      </tr>
-      <tr th:each="p : ${pairings}" class="pairing-row">
-        <td th:text="${p.matchId}"></td>
-        <td th:text="${p.stage}"></td>
-        <td th:text="${p.date}"></td>
-        <td th:text="${p.city}"></td>
-        <td th:text="${p.home}"></td>
-        <td th:text="${p.homeSlot}"></td>
-        <td th:text="${p.away}"></td>
-        <td th:text="${p.awaySlot}"></td>
-        <td th:text="${#numbers.formatDecimal(p.avgRank, 1, 1)}"></td>
-      </tr>
-    </table>
-
-    <a href="/">Back</a>
-
-    <script>
-      // Intentionally left minimal: filtering is handled server-side via toggles, no text input required.
-    </script>
   </body>
 </html>
