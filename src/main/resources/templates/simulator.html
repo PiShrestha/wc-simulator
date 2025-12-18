@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body style="font-family: system-ui, sans-serif; margin: 24px">
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 12px 0;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      th {
+        background: #f4f6f8;
+        text-align: left;
+      }
+      label {
+        display: inline-block;
+        width: 90px;
+        font-weight: 600;
+      }
+      input[type="text"] {
+        margin: 6px 0;
+      }
+    </style>
+    <h2>Bracket Simulator</h2>
+
+    <form action="/simulator" method="post">
+      <label>City:</label>
+      <select name="city">
+        <option
+          th:each="c : ${cities}"
+          th:value="${c}"
+          th:text="${c}"
+          th:selected="${c == selectedCity}"
+        ></option>
+      </select>
+
+      <h3>Group Orders (comma-separated)</h3>
+      <div th:each="entry : ${groups}">
+        <label th:text="'Group ' + ${entry.key}"></label>
+        <input
+          type="text"
+          th:name="${'order_' + entry.key}"
+          th:value="${#strings.listJoin(entry.value, ', ')}"
+          size="80"
+        />
+      </div>
+
+      <button type="submit">Project</button>
+    </form>
+
+    <h3
+      th:if="${#lists.size(projected) > 0}"
+      th:text="${'Projected Matchups in ' + selectedCity}"
+    ></h3>
+    <table th:if="${#lists.size(projected) > 0}" border="1">
+      <tr>
+        <th>Match ID</th>
+        <th>Home</th>
+        <th>Away</th>
+      </tr>
+      <tr th:each="p : ${projected}">
+        <td th:text="${p.matchId}"></td>
+        <td th:text="${p.home}"></td>
+        <td th:text="${p.away}"></td>
+      </tr>
+    </table>
+
+    <a href="/">Back</a>
+  </body>
+</html>

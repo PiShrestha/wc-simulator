@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body style="font-family: system-ui, sans-serif; margin: 24px">
+    <h2>Something went wrong</h2>
+    <p>We hit an unexpected error while processing your request.</p>
+
+    <table border="1" style="border-collapse: collapse">
+      <tr>
+        <th>Status</th>
+        <td th:text="${status}"></td>
+      </tr>
+      <tr>
+        <th>Message</th>
+        <td th:text="${message}"></td>
+      </tr>
+      <tr>
+        <th>Path</th>
+        <td th:text="${path}"></td>
+      </tr>
+    </table>
+
+    <p><a href="/">Back to Home</a></p>
+  </body>
+</html>

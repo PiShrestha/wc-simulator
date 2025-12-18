@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body style="font-family: system-ui, sans-serif; margin: 24px">
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 12px 0;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      th {
+        background: #f4f6f8;
+        text-align: left;
+      }
+      h2,
+      h3 {
+        margin-top: 24px;
+      }
+    </style>
+    <h2 th:text="${'Matches in ' + city}"></h2>
+
+    <table border="1">
+      <tr>
+        <th>Match ID</th>
+        <th>Stage</th>
+        <th>Date</th>
+        <th>Home Slot</th>
+        <th>Away Slot</th>
+      </tr>
+
+      <tr th:each="m : ${matches}">
+        <td th:text="${m.matchId}"></td>
+        <td th:text="${m.stage}"></td>
+        <td th:text="${m.date}"></td>
+        <td th:text="${m.homeSlot}"></td>
+        <td th:text="${m.awaySlot}"></td>
+      </tr>
+    </table>
+
+    <h3 th:text="${'Possible Teams in ' + city}"></h3>
+    <ul>
+      <li th:each="t : ${teams}" th:text="${t.name}"></li>
+      <li th:if="${teams == null || #lists.isEmpty(teams)}">
+        No data available
+      </li>
+    </ul>
+
+    <h3>Possible Matchups</h3>
+    <table border="1">
+      <tr>
+        <th>Match ID</th>
+        <th>Stage</th>
+        <th>Date</th>
+        <th>City</th>
+        <th>Home</th>
+        <th>Home Slot</th>
+        <th>Away</th>
+        <th>Away Slot</th>
+        <th>Avg Rank</th>
+      </tr>
+      <tr th:each="p : ${pairings}">
+        <td th:text="${p.matchId}"></td>
+        <td th:text="${p.stage}"></td>
+        <td th:text="${p.date}"></td>
+        <td th:text="${p.city}"></td>
+        <td th:text="${p.home}"></td>
+        <td th:text="${p.homeSlot}"></td>
+        <td th:text="${p.away}"></td>
+        <td th:text="${p.awaySlot}"></td>
+        <td th:text="${#numbers.formatDecimal(p.avgRank, 1, 1)}"></td>
+      </tr>
+    </table>
+
+    <a href="/">Back</a>
+  </body>
+</html>

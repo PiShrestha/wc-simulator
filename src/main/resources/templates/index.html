@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <h2>Select a Venue</h2>
+
+    <form action="/venue" method="get">
+      <select name="city">
+        <option th:each="v : ${venues}" th:value="${v}" th:text="${v}"></option>
+      </select>
+      <button type="submit">View Matches</button>
+    </form>
+
+    <p>
+      <a href="/simulator">Open Bracket Simulator</a>
+      — tweak group orders and see projected matchups.
+    </p>
+  </body>
+</html>
