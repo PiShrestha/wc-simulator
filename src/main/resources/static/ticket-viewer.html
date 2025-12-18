@@ -2,759 +2,389 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Ticket Explorer</title>
     <style>
       :root {
-        --bg: radial-gradient(
-          circle at 20% 20%,
-          #0c4a6e 0,
-          #0f172a 45%,
-          #0b1220 100%
-        );
-        --panel: #0f172a;
-        --card: #0b1220;
-        --muted: #94a3b8;
+        color-scheme: light dark;
+        --bg: #0f172a;
+        --panel: #111827;
+        --panel-alt: #0b1223;
+        --border: #1f2937;
+        --accent: #22c55e;
         --text: #e5e7eb;
-        --accent: #22d3ee;
-        --accent-2: #f59e0b;
-        --border: rgba(255, 255, 255, 0.08);
-        --shadow: 0 18px 36px rgba(0, 0, 0, 0.32);
+        --muted: #9ca3af;
+        --card: #0f172a;
       }
-
       * {
         box-sizing: border-box;
       }
-
       body {
         margin: 0;
-        min-height: 100vh;
         background: var(--bg);
         color: var(--text);
-        font-family: "Manrope", "Helvetica Neue", sans-serif;
-        padding: 28px 18px 36px;
-        display: flex;
-        justify-content: center;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        min-height: 100vh;
       }
-
+      a {
+        color: inherit;
+      }
       .shell {
-        width: min(1280px, 100%);
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 26px;
-        box-shadow: var(--shadow);
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 16px 48px;
       }
-
-      .header {
+      header {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         gap: 12px;
         flex-wrap: wrap;
-        align-items: flex-start;
         margin-bottom: 16px;
       }
-
-      h1 {
+      .title {
+        font-size: 28px;
+        margin: 0 0 4px;
+      }
+      .subtitle {
+        color: var(--muted);
         margin: 0;
-        font-size: 26px;
-        letter-spacing: -0.2px;
+        font-size: 14px;
       }
-
-      .lead {
-        margin: 6px 0 0;
-        color: var(--muted);
-        max-width: 760px;
-        line-height: 1.5;
-      }
-
-      .chip-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 10px;
-      }
-
-      .chip {
-        padding: 8px 12px;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.06);
-        color: var(--muted);
-        font-weight: 600;
-        font-size: 13px;
-      }
-
-      .status {
-        margin: 10px 0 14px;
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.04);
-        color: var(--muted);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .status.ok {
-        color: #a5f3fc;
-        border-color: rgba(34, 211, 238, 0.4);
-      }
-
       .layout {
         display: grid;
         grid-template-columns: 280px 1fr;
         gap: 16px;
         align-items: start;
       }
-
-      .venue-rail {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 14px;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-        max-height: calc(100vh - 180px);
-        overflow: auto;
-      }
-
-      .venue-rail h3 {
-        margin: 0 0 8px;
-        font-size: 16px;
-      }
-
-      .venue-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        gap: 8px;
-      }
-
-      .venue-item {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        align-items: center;
-        padding: 10px 12px;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.03);
-        cursor: pointer;
-        transition: border-color 120ms ease, transform 120ms ease,
-          background 120ms ease;
-      }
-
-      .venue-item:hover,
-      .venue-item:focus {
-        outline: none;
-        transform: translateY(-1px);
-        border-color: rgba(34, 211, 238, 0.5);
-        background: rgba(34, 211, 238, 0.06);
-      }
-
-      .venue-item.active {
-        border-color: rgba(34, 211, 238, 0.7);
-        background: rgba(34, 211, 238, 0.12);
-        color: var(--text);
-      }
-
-      .venue-name {
-        font-weight: 700;
-      }
-
-      .venue-meta {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-        color: var(--muted);
-        font-size: 12px;
-      }
-
-      .badge-small {
-        padding: 3px 8px;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.05);
-        font-weight: 700;
-        font-size: 11px;
-        color: var(--text);
-      }
-
-      .content {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .filters-bar {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 12px 14px;
-      }
-
-      .filters-bar strong {
-        font-size: 15px;
-      }
-
-      .filters-bar .hint {
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .filters-actions {
-        display: flex;
-        gap: 8px;
-      }
-
-      .btn-link {
-        padding: 9px 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text);
-        text-decoration: none;
-        font-weight: 700;
-      }
-
-      .match-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 16px;
-      }
-
-      .match-card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 16px;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .meta-line {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px 10px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .meta-line strong {
-        color: var(--text);
-      }
-
-      .teams {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        align-items: center;
-      }
-
-      .pill {
-        padding: 7px 10px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border);
-        font-weight: 700;
-        color: var(--text);
-        font-size: 13px;
-      }
-
-      .ticket-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 10px;
-      }
-
-      .ticket-pill {
-        position: relative;
-        width: 100%;
-        border: 1px solid var(--border);
-        background: rgba(34, 211, 238, 0.06);
-        color: var(--text);
-        border-radius: 12px;
-        padding: 12px;
-        text-align: left;
-        cursor: pointer;
-        transition: transform 120ms ease, border-color 120ms ease;
-      }
-
-      .ticket-pill:hover,
-      .ticket-pill:focus {
-        border-color: rgba(34, 211, 238, 0.6);
-        transform: translateY(-2px);
-        outline: none;
-      }
-
-      .ticket-pill .label {
-        font-weight: 700;
-        display: block;
-      }
-
-      .ticket-pill .price {
-        font-size: 15px;
-        color: #a5f3fc;
-        font-weight: 700;
-      }
-
-      .tooltip {
-        position: absolute;
-        left: 0;
-        bottom: calc(100% + 10px);
-        min-width: 240px;
-        background: #0a1120;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 12px;
-        box-shadow: var(--shadow);
-        opacity: 0;
-        transform: translateY(6px);
-        pointer-events: none;
-        transition: opacity 140ms ease, transform 140ms ease;
-        z-index: 5;
-      }
-
-      .ticket-pill:hover .tooltip,
-      .ticket-pill:focus .tooltip,
-      .ticket-pill:focus-within .tooltip {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      .tooltip h4 {
-        margin: 0 0 6px;
-        font-size: 15px;
-      }
-
-      .tooltip p {
-        margin: 4px 0 8px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .access-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        gap: 6px;
-      }
-
-      .access-list li {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 8px 10px;
-        font-size: 13px;
-      }
-
-      .access-list .muted {
-        color: var(--muted);
-      }
-
-      .tooltip-note {
-        margin: 8px 0 0;
-        color: var(--muted);
-        font-size: 12px;
-      }
-
-      .tags {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-      }
-
-      .tag {
-        padding: 4px 8px;
-        border-radius: 999px;
-        background: rgba(34, 211, 238, 0.12);
-        color: var(--accent);
-        border: 1px solid rgba(34, 211, 238, 0.35);
-        font-weight: 700;
-        font-size: 11px;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
-      }
-
-      a.btn {
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--text);
-        text-decoration: none;
-        font-weight: 700;
-      }
-
       @media (max-width: 960px) {
         .layout {
           grid-template-columns: 1fr;
         }
-        .venue-rail {
-          max-height: none;
-          order: 2;
-        }
-        .content {
-          order: 1;
-        }
       }
-
-      @media (max-width: 720px) {
-        body {
-          padding: 18px 12px;
-        }
-
-        .shell {
-          padding: 18px;
-        }
-
-        .tooltip {
-          position: fixed;
-          left: 16px;
-          right: 16px;
-          bottom: auto;
-          top: 12px;
-          transform: translateY(0);
-        }
-
-        .ticket-pill:hover .tooltip,
-        .ticket-pill:focus .tooltip,
-        .ticket-pill:focus-within .tooltip {
-          opacity: 1;
-        }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+      }
+      .venue-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .venue-btn {
+        border: 1px solid var(--border);
+        background: var(--panel-alt);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 12px;
+        text-align: left;
+        cursor: pointer;
+        transition: border-color 120ms ease, transform 120ms ease;
+      }
+      .venue-btn:hover,
+      .venue-btn:focus-visible {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+      }
+      .venue-btn.active {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
+      }
+      .venue-name {
+        font-weight: 700;
+        display: block;
+      }
+      .venue-meta {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+      .matches-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 12px;
+      }
+      .match-card {
+        position: relative;
+        border: 1px solid var(--border);
+        background: var(--card);
+        border-radius: 14px;
+        padding: 14px 14px 44px;
+        min-height: 150px;
+        overflow: hidden;
+        transition: border-color 120ms ease, transform 120ms ease;
+      }
+      .match-card:hover,
+      .match-card:focus-within {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .match-id {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+      .match-meta {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 4px 0 8px;
+      }
+      .teams {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .team-pill {
+        background: var(--panel-alt);
+        border: 1px solid var(--border);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 12px;
+      }
+      .vs {
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 11px;
+      }
+      .tooltip {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        padding: 10px 12px;
+        background: rgba(8, 47, 22, 0.92);
+        border: 1px solid rgba(34, 197, 94, 0.45);
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        color: #d1fae5;
+        opacity: 0;
+        transform: translateY(6px);
+        pointer-events: none;
+        transition: opacity 120ms ease, transform 120ms ease;
+        backdrop-filter: blur(4px);
+      }
+      .match-card:hover .tooltip,
+      .match-card:focus-within .tooltip {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .tooltip-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+      }
+      .tooltip-row + .tooltip-row {
+        margin-top: 6px;
+      }
+      .tooltip-label {
+        font-weight: 700;
+      }
+      .tooltip-price {
+        font-weight: 800;
+      }
+      .empty {
+        color: var(--muted);
+        font-size: 14px;
       }
     </style>
   </head>
   <body>
     <div class="shell">
-      <div class="header">
+      <header>
         <div>
-          <h1>Ticket Explorer</h1>
-          <p class="lead">
-            Live view of every listed match, pulled straight from
-            <code>tickets.json</code>. Hover or focus on a category to compare
-            prices and accessibility-friendly options.
+          <p class="subtitle">World Cup Ticket Explorer</p>
+          <h1 class="title">Pick a venue, hover to reveal prices</h1>
+          <p class="subtitle">
+            Only Category 1–3 prices are shown on hover. All data is read from
+            tickets.json.
           </p>
-          <div class="chip-row">
-            <div class="chip">Data source: /tickets.json</div>
-            <div class="chip">Shows categories 1–3</div>
-            <div class="chip">Tooltips: Wheelchair / Easy Access</div>
-          </div>
         </div>
-        <a class="btn" href="/">← Back home</a>
-      </div>
-
-      <div id="status" class="status">Loading ticket data…</div>
+        <a href="/" class="subtitle" style="text-decoration: none">← Back</a>
+      </header>
 
       <div class="layout">
-        <aside class="venue-rail" aria-label="Venues">
-          <h3>Venues</h3>
-          <ul id="venue-list" class="venue-list"></ul>
+        <aside class="panel" aria-label="Venues">
+          <h2 style="margin-top: 0; margin-bottom: 10px; font-size: 16px">
+            Venues
+          </h2>
+          <div id="venueList" class="venue-list" role="list"></div>
         </aside>
 
-        <main class="content">
-          <div class="filters-bar">
+        <main class="panel" aria-label="Matches">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: 10px;
+              margin-bottom: 10px;
+              flex-wrap: wrap;
+            "
+          >
             <div>
-              <strong id="active-venue-label">All venues</strong>
-              <div class="hint" id="active-venue-hint">
-                Hover a stadium to preview, click to lock the view.
-              </div>
+              <p class="subtitle" id="activeVenueHint">Select a venue</p>
+              <h2 id="activeVenueLabel" style="margin: 4px 0 0">&nbsp;</h2>
             </div>
-            <div class="filters-actions">
-              <a class="btn-link" href="#" id="show-all">Show all venues</a>
-              <a class="btn" href="/tickets.json">Download JSON</a>
-            </div>
+            <a
+              href="tickets.json"
+              class="subtitle"
+              style="text-decoration: none"
+              >Download JSON</a
+            >
           </div>
-          <div id="match-grid" class="match-grid" aria-live="polite"></div>
+          <div id="matches" class="matches-grid"></div>
         </main>
       </div>
     </div>
 
     <script>
-      (function () {
-        const statusEl = document.getElementById("status");
-        const gridEl = document.getElementById("match-grid");
-        const venueListEl = document.getElementById("venue-list");
-        const activeVenueLabel = document.getElementById("active-venue-label");
-        const activeVenueHint = document.getElementById("active-venue-hint");
-        const showAllBtn = document.getElementById("show-all");
-        const state = {
-          allMatches: [],
-          byVenue: new Map(),
-          activeVenue: "All venues",
-          previewVenue: null,
-        };
-        const ACCESS_TYPES = [
-          { label: "Wheelchair", key: "Wheelchair" },
-          { label: "Easy Access Standard", key: "Easy Access Standard" },
-          { label: "Easy Access Amenity", key: "Easy Access Amenity" },
-        ];
+      const venueListEl = document.getElementById("venueList");
+      const matchesEl = document.getElementById("matches");
+      const activeVenueLabel = document.getElementById("activeVenueLabel");
+      const activeVenueHint = document.getElementById("activeVenueHint");
+      let allMatches = [];
+      let activeVenue = null;
 
-        fetch("/tickets.json")
-          .then((res) => {
-            if (!res.ok) throw new Error("Ticket file not found");
-            return res.json();
-          })
-          .then((data) => {
-            state.allMatches = Array.isArray(data) ? data : [];
-            state.byVenue = groupByVenue(state.allMatches);
-            renderVenues(state.byVenue);
-            renderMatches(state.allMatches);
-            statusEl.textContent = `${state.allMatches.length} matches loaded from tickets.json`;
-            statusEl.classList.add("ok");
-          })
-          .catch((err) => {
-            console.error(err);
-            statusEl.textContent = "Could not load tickets.json";
-          });
-
-        showAllBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          setActiveVenue("All venues");
+      fetch("./tickets.json")
+        .then((res) => res.json())
+        .then((data) => {
+          allMatches = Array.isArray(data) ? data : [];
+          const venues = Array.from(
+            new Set(allMatches.map((m) => m.stadium))
+          ).sort();
+          renderVenues(venues);
+          if (venues.length) selectVenue(venues[0]);
+        })
+        .catch((err) => {
+          activeVenueLabel.textContent = "Error loading tickets.json";
+          activeVenueHint.textContent = err.message || "";
         });
 
-        function groupByVenue(matches) {
-          const map = new Map();
-          matches.forEach((m) => {
-            const key = m.stadium || "Unknown";
-            if (!map.has(key)) map.set(key, []);
-            map.get(key).push(m);
-          });
-          for (const [k, list] of map.entries()) {
-            list.sort((a, b) => (a.match || 0) - (b.match || 0));
-            map.set(k, list);
-          }
-          return map;
-        }
-
-        function renderVenues(map) {
-          const entries = Array.from(map.entries()).sort((a, b) =>
-            a[0].localeCompare(b[0])
-          );
-          venueListEl.innerHTML = "";
-
-          const allItem = buildVenueItem("All venues", state.allMatches.length);
-          venueListEl.appendChild(allItem);
-
-          entries.forEach(([stadium, matches]) => {
-            const li = buildVenueItem(stadium, matches.length, matches);
-            venueListEl.appendChild(li);
-          });
-        }
-
-        function buildVenueItem(name, count, matches = []) {
-          const li = document.createElement("li");
-          li.className = "venue-item" + (state.activeVenue === name ? " active" : "");
-          li.tabIndex = 0;
-
-          const left = document.createElement("div");
-          left.style.display = "flex";
-          left.style.flexDirection = "column";
-          left.style.gap = "4px";
-
-          const title = document.createElement("div");
-          title.className = "venue-name";
-          title.textContent = name;
-
-          const meta = document.createElement("div");
+      function renderVenues(venues) {
+        venueListEl.innerHTML = "";
+        venues.forEach((venue) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "venue-btn";
+          btn.innerHTML = `<span class="venue-name">${venue}</span>`;
+          const count = allMatches.filter((m) => m.stadium === venue).length;
+          const meta = document.createElement("span");
           meta.className = "venue-meta";
-          meta.innerHTML = `<span class="badge-small">${count} matches</span>`;
-          if (matches.length > 0) {
-            const first = matches[0];
-            meta.innerHTML += `<span>${first.date || "TBD"}</span>`;
-          }
+          meta.textContent = `${count} match${count === 1 ? "" : "es"}`;
+          btn.append(meta);
+          btn.addEventListener("click", () => selectVenue(venue));
+          venueListEl.append(btn);
+        });
+      }
 
-          left.append(title, meta);
-          li.appendChild(left);
-
-          li.addEventListener("click", () => setActiveVenue(name));
-          li.addEventListener("keypress", (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setActiveVenue(name);
-            }
-          });
-          li.addEventListener("mouseenter", () => previewVenue(name, matches));
-          li.addEventListener("focus", () => previewVenue(name, matches));
-          li.addEventListener("mouseleave", () => clearPreview());
-          li.addEventListener("blur", () => clearPreview());
-
-          return li;
-        }
-
-        function previewVenue(name, matches) {
-          if (!matches || matches.length === 0) return;
-          if (name === state.activeVenue) return;
-          state.previewVenue = name;
-          activeVenueLabel.textContent = `${name} (preview)`;
-          activeVenueHint.textContent = `${matches.length} scheduled here; first is ${matches[0].date || "TBD"}. Click to lock.`;
-          renderMatches(matches);
-        }
-
-        function clearPreview() {
-          if (!state.previewVenue) return;
-          state.previewVenue = null;
-          activeVenueLabel.textContent = state.activeVenue;
-          activeVenueHint.textContent = "Hover a stadium to preview, click to lock the view.";
-          renderMatches(
-            state.activeVenue === "All venues"
-              ? state.allMatches
-              : state.byVenue.get(state.activeVenue) || []
+      function selectVenue(venue) {
+        activeVenue = venue;
+        activeVenueLabel.textContent = venue;
+        activeVenueHint.textContent =
+          "Hover a match card to reveal Category 1–3 prices.";
+        Array.from(venueListEl.children).forEach((child) => {
+          child.classList.toggle(
+            "active",
+            child.querySelector(".venue-name").textContent === venue
           );
+        });
+        renderMatches();
+      }
+
+      function renderMatches() {
+        matchesEl.innerHTML = "";
+        const scoped = allMatches.filter((m) => m.stadium === activeVenue);
+        if (!scoped.length) {
+          const empty = document.createElement("p");
+          empty.className = "empty";
+          empty.textContent = "No matches for this venue.";
+          matchesEl.append(empty);
+          return;
         }
+        scoped.sort((a, b) => (a.match || 0) - (b.match || 0));
+        scoped.forEach((match) => matchesEl.append(buildMatchCard(match)));
+      }
 
-        function setActiveVenue(name) {
-          state.activeVenue = name;
-          state.previewVenue = null;
-          activeVenueLabel.textContent = name;
-          activeVenueHint.textContent = "Hover a stadium to preview, click to lock the view.";
+      function buildMatchCard(match) {
+        const card = document.createElement("article");
+        card.className = "match-card";
+        card.tabIndex = 0;
 
-          const items = venueListEl.querySelectorAll(".venue-item");
-          items.forEach((el) => {
-            el.classList.toggle("active", el.querySelector(".venue-name").textContent === name);
-          });
+        const id = document.createElement("div");
+        id.className = "match-id";
+        id.textContent = `Match ${match.match ?? ""}`;
 
-          if (name === "All venues") {
-            renderMatches(state.allMatches);
-          } else {
-            const list = state.byVenue.get(name) || [];
-            renderMatches(list);
-            activeVenueHint.textContent = `${list.length} matches scheduled at ${name}.`;
+        const meta = document.createElement("div");
+        meta.className = "match-meta";
+        const date = match.date || "TBD";
+        const time = match.time || "";
+        const stadium = match.stadium || "";
+        meta.textContent = `${date}${time ? " · " + time : ""}${
+          stadium ? " · " + stadium : ""
+        }`;
+
+        const teams = document.createElement("div");
+        teams.className = "teams";
+        const list = Array.isArray(match.teams) ? match.teams : [];
+        list.forEach((team, idx) => {
+          const pill = document.createElement("span");
+          pill.className = "team-pill";
+          pill.textContent = team;
+          teams.append(pill);
+          if (idx === 0 && list.length > 1) {
+            const vs = document.createElement("span");
+            vs.className = "vs";
+            vs.textContent = "vs";
+            teams.append(vs);
           }
-        }
+        });
 
-        function renderMatches(matches) {
-          const sorted = [...matches].sort(
-            (a, b) => (a.match || 0) - (b.match || 0)
-          );
-          gridEl.innerHTML = "";
-          if (sorted.length === 0) {
-            gridEl.innerHTML = `<div class="status">No matches for this view.</div>`;
-            return;
-          }
-          sorted.forEach((match) => gridEl.appendChild(buildCard(match)));
-        }
+        const tooltip = buildTooltip(match.tickets || {});
 
-        function buildCard(match) {
-          const card = document.createElement("article");
-          card.className = "match-card";
+        card.append(id, meta, teams, tooltip);
+        return card;
+      }
 
-          const header = document.createElement("div");
-          header.className = "tags";
-          const badge = document.createElement("div");
-          badge.className = "tag";
-          badge.textContent = `Match ${match.match}`;
-          header.appendChild(badge);
+      function buildTooltip(tickets) {
+        const tooltip = document.createElement("div");
+        tooltip.className = "tooltip";
+        const cats = ["Category 1", "Category 2", "Category 3"];
+        cats.forEach((cat) => {
+          tooltip.append(priceRow(cat, tickets[cat]));
+        });
+        return tooltip;
+      }
 
-          const meta = document.createElement("div");
-          meta.className = "meta-line";
-          meta.innerHTML = `<strong>${match.date}</strong> · ${
-            match.time || "TBD"
-          } · ${match.stadium || ""}`;
+      function priceRow(label, value) {
+        const row = document.createElement("div");
+        row.className = "tooltip-row";
+        const l = document.createElement("span");
+        l.className = "tooltip-label";
+        l.textContent = label;
+        const p = document.createElement("span");
+        p.className = "tooltip-price";
+        p.textContent = formatPrice(value);
+        row.append(l, p);
+        return row;
+      }
 
-          const teams = document.createElement("div");
-          teams.className = "teams";
-          (match.teams || []).forEach((t, idx) => {
-            const pill = document.createElement("div");
-            pill.className = "pill";
-            pill.textContent = t;
-            teams.appendChild(pill);
-            if (idx === 0 && match.teams.length > 1) {
-              const vs = document.createElement("div");
-              vs.style.color = "var(--muted)";
-              vs.textContent = "vs";
-              teams.appendChild(vs);
-            }
-          });
-
-          const ticketRow = document.createElement("div");
-          ticketRow.className = "ticket-row";
-          [1, 2, 3].forEach((cat) => {
-            ticketRow.appendChild(buildCategory(match.tickets || {}, cat));
-          });
-
-          card.append(header, meta, teams, ticketRow);
-          return card;
-        }
-
-        function buildCategory(ticketMap, catNumber) {
-          const catLabel = `Category ${catNumber}`;
-          const price = ticketMap[catLabel];
-          const pill = document.createElement("button");
-          pill.type = "button";
-          pill.className = "ticket-pill";
-          pill.setAttribute("tabindex", "0");
-          pill.setAttribute(
-            "aria-label",
-            `${catLabel} price ${formatUSD(
-              price
-            )}; hover or focus for accessibility options`
-          );
-          pill.innerHTML = `<span class="label">${catLabel}</span><span class="price">${formatUSD(
-            price
-          )}</span>`;
-
-          const tooltip = document.createElement("div");
-          tooltip.className = "tooltip";
-          const accessList = document.createElement("ul");
-          accessList.className = "access-list";
-
-          const intro = document.createElement("h4");
-          intro.textContent = `${catLabel} details`;
-          const introNote = document.createElement("p");
-          introNote.textContent =
-            "Accessible pricing is pulled directly from the file.";
-          tooltip.append(intro, introNote);
-
-          ACCESS_TYPES.forEach((type) => {
-            const key = `${type.key} - ${catLabel}`;
-            const li = document.createElement("li");
-            const priceVal = ticketMap[key];
-            li.innerHTML = `<span>${type.label}</span><span class="${
-              priceVal == null ? "muted" : "price"
-            }">${priceVal == null ? "Not listed" : formatUSD(priceVal)}</span>`;
-            accessList.appendChild(li);
-          });
-
-          tooltip.appendChild(accessList);
-          const note = document.createElement("p");
-          note.className = "tooltip-note";
-          note.textContent = "Use keyboard focus or hover to open.";
-          tooltip.appendChild(note);
-
-          pill.appendChild(tooltip);
-          return pill;
-        }
-
-        function formatUSD(val) {
-          if (val === undefined || val === null || Number.isNaN(Number(val)))
-            return "N/A";
-          return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2,
-          }).format(Number(val));
-        }
-      })();
+      function formatPrice(val) {
+        if (val === undefined || val === null || Number.isNaN(Number(val)))
+          return "Not listed";
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        }).format(Number(val));
+      }
     </script>
   </body>
 </html>
