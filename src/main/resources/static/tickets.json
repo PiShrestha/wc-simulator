@@ -1,0 +1,482 @@
+[
+  {
+    "match": 73,
+    "date": "Jun 28, 2026",
+    "time": "12:00",
+    "stadium": "Los Angeles Stadium",
+    "teams": ["2A", "2B"],
+    "tickets": {
+      "Category 1": 790.00,
+      "Category 2": 605.00,
+      "Category 3": 305.00,
+      "Easy Access Standard - Category 1": 790.00,
+      "Easy Access Standard - Category 2": 605.00,
+      "Easy Access Standard - Category 3": 305.00
+    }
+  },
+  {
+    "match": 74,
+    "date": "Jun 29, 2026",
+    "time": "16:30",
+    "stadium": "Boston Stadium",
+    "teams": ["1E", "3ABCDF"],
+    "tickets": {
+      "Category 1": 620.00,
+      "Category 2": 515.00,
+      "Category 3": 265.00,
+      "Easy Access Standard - Category 1": 620.00,
+      "Easy Access Standard - Category 2": 515.00,
+      "Easy Access Standard - Category 3": 265.00
+    }
+  },
+  {
+    "match": 75,
+    "date": "Jun 29, 2026",
+    "time": "19:00",
+    "stadium": "Monterrey Stadium",
+    "teams": ["1F", "2C"],
+    "tickets": {
+      "Category 1": 460.00,
+      "Category 2": 350.00,
+      "Category 3": 190.00,
+      "Easy Access Standard - Category 1": 460.00,
+      "Easy Access Standard - Category 2": 350.00,
+      "Easy Access Standard - Category 3": 190.00
+    }
+  },
+  {
+    "match": 76,
+    "date": "Jun 29, 2026",
+    "time": "12:00",
+    "stadium": "Houston Stadium",
+    "teams": ["1C", "2F"],
+    "tickets": {
+      "Category 1": 530.00,
+      "Category 2": 430.00,
+      "Category 3": 220.00,
+      "Easy Access Standard - Category 1": 530.00,
+      "Easy Access Standard - Category 2": 430.00,
+      "Easy Access Standard - Category 3": 220.00
+    }
+  },
+  {
+    "match": 77,
+    "date": "Jun 30, 2026",
+    "time": "17:00",
+    "stadium": "New York/New Jersey Stadium",
+    "teams": ["1I", "3CDFGH"],
+    "tickets": {
+      "Category 1": 750.00,
+      "Category 2": 610.00,
+      "Category 3": 280.00,
+      "Easy Access Standard - Category 1": 750.00,
+      "Easy Access Standard - Category 2": 610.00,
+      "Easy Access Standard - Category 3": 280.00
+    }
+  },
+  {
+    "match": 78,
+    "date": "Jun 30, 2026",
+    "time": "12:00",
+    "stadium": "Dallas Stadium",
+    "teams": ["2E", "2I"],
+    "tickets": {
+      "Category 1": 505.00,
+      "Category 2": 405.00,
+      "Category 3": 205.00,
+      "Easy Access Standard - Category 1": 505.00,
+      "Easy Access Standard - Category 2": 405.00,
+      "Easy Access Standard - Category 3": 205.00
+    }
+  },
+  {
+    "match": 79,
+    "date": "Jun 30, 2026",
+    "time": "19:00",
+    "stadium": "Mexico City Stadium",
+    "teams": ["1A", "3CEFHI"],
+    "tickets": {
+      "Category 1": 620.00,
+      "Category 2": 485.00,
+      "Category 3": 240.00,
+      "Easy Access Standard - Category 1": 620.00,
+      "Easy Access Standard - Category 2": 485.00,
+      "Easy Access Standard - Category 3": 240.00
+    }
+  },
+  {
+    "match": 80,
+    "date": "Jul 01, 2026",
+    "time": "12:00",
+    "stadium": "Atlanta Stadium",
+    "teams": ["1L", "3EHIJK"],
+    "tickets": {
+      "Category 1": 530.00,
+      "Category 2": 430.00,
+      "Category 3": 190.00,
+      "Easy Access Standard - Category 1": 530.00,
+      "Easy Access Standard - Category 2": 430.00,
+      "Easy Access Standard - Category 3": 190.00
+    }
+  },
+  {
+    "match": 81,
+    "date": "Jul 01, 2026",
+    "time": "17:00",
+    "stadium": "San Francisco Bay Area Stadium",
+    "teams": ["1D", "3BEFIJ"],
+    "tickets": {
+      "Category 1": 765.00,
+      "Category 2": 605.00,
+      "Category 3": 275.00,
+      "Easy Access Standard - Category 1": 765.00,
+      "Easy Access Standard - Category 2": 605.00,
+      "Easy Access Standard - Category 3": 275.00
+    }
+  },
+  {
+    "match": 82,
+    "date": "Jul 01, 2026",
+    "time": "13:00",
+    "stadium": "Seattle Stadium",
+    "teams": ["1G", "3AEHIJ"],
+    "tickets": {
+      "Category 1": 515.00,
+      "Category 2": 430.00,
+      "Category 3": 200.00,
+      "Easy Access Standard - Category 1": 515.00,
+      "Easy Access Standard - Category 2": 430.00,
+      "Easy Access Standard - Category 3": 200.00
+    }
+  },
+  {
+    "match": 83,
+    "date": "Jul 02, 2026",
+    "time": "19:00",
+    "stadium": "Toronto Stadium",
+    "teams": ["2K", "2L"],
+    "tickets": {
+      "Category 1": 625.00,
+      "Category 2": 475.00,
+      "Category 3": 240.00,
+      "Easy Access Standard - Category 1": 625.00,
+      "Easy Access Standard - Category 2": 475.00,
+      "Easy Access Standard - Category 3": 240.00
+    }
+  },
+  {
+    "match": 84,
+    "date": "Jul 02, 2026",
+    "time": "12:00",
+    "stadium": "Los Angeles Stadium",
+    "teams": ["1H", "2J"],
+    "tickets": {
+      "Category 1": 700.00,
+      "Category 2": 555.00,
+      "Category 3": 250.00,
+      "Easy Access Standard - Category 1": 700.00,
+      "Easy Access Standard - Category 2": 555.00,
+      "Easy Access Standard - Category 3": 250.00
+    }
+  },
+  {
+    "match": 85,
+    "date": "Jul 02, 2026",
+    "time": "20:00",
+    "stadium": "BC Place Vancouver",
+    "teams": ["1B", "3EFGIJ"],
+    "tickets": {
+      "Category 1": 600.00,
+      "Category 2": 515.00,
+      "Category 3": 230.00,
+      "Easy Access Standard - Category 1": 600.00,
+      "Easy Access Standard - Category 2": 515.00,
+      "Easy Access Standard - Category 3": 230.00
+    }
+  },
+  {
+    "match": 86,
+    "date": "Jul 03, 2026",
+    "time": "18:00",
+    "stadium": "Miami Stadium",
+    "teams": ["1J", "2H"],
+    "tickets": {
+      "Category 1": 700.00,
+      "Category 2": 560.00,
+      "Category 3": 270.00,
+      "Easy Access Standard - Category 1": 700.00,
+      "Easy Access Standard - Category 2": 560.00,
+      "Easy Access Standard - Category 3": 270.00
+    }
+  },
+  {
+    "match": 87,
+    "date": "Jul 03, 2026",
+    "time": "20:30",
+    "stadium": "Kansas City Stadium",
+    "teams": ["1K", "3DEIJL"],
+    "tickets": {
+      "Category 1": 520.00,
+      "Category 2": 425.00,
+      "Category 3": 200.00,
+      "Easy Access Standard - Category 1": 520.00,
+      "Easy Access Standard - Category 2": 425.00,
+      "Easy Access Standard - Category 3": 200.00
+    }
+  },
+  {
+    "match": 88,
+    "date": "Jul 03, 2026",
+    "time": "13:00",
+    "stadium": "Dallas Stadium",
+    "teams": ["2D", "2G"],
+    "tickets": {
+      "Category 1": 540.00,
+      "Category 2": 440.00,
+      "Category 3": 225.00,
+      "Easy Access Standard - Category 1": 540.00,
+      "Easy Access Standard - Category 2": 440.00,
+      "Easy Access Standard - Category 3": 225.00
+    }
+  },
+  {
+    "match": 89,
+    "date": "Jul 04, 2026",
+    "time": "17:00",
+    "stadium": "Philadelphia Stadium",
+    "teams": ["Winner 74", "Winner 77"],
+    "tickets": {
+      "Category 1": 840.00,
+      "Category 2": 620.00,
+      "Category 3": 320.00,
+      "Easy Access Standard - Category 1": 840.00,
+      "Easy Access Standard - Category 2": 620.00,
+      "Easy Access Standard - Category 3": 320.00
+    }
+  },
+  {
+    "match": 90,
+    "date": "Jul 04, 2026",
+    "time": "12:00",
+    "stadium": "Houston Stadium",
+    "teams": ["Winner 73", "Winner 75"],
+    "tickets": {
+      "Category 1": 620.00,
+      "Category 2": 505.00,
+      "Category 3": 220.00,
+      "Easy Access Standard - Category 1": 620.00,
+      "Easy Access Standard - Category 2": 505.00,
+      "Easy Access Standard - Category 3": 220.00
+    }
+  },
+  {
+    "match": 91,
+    "date": "Jul 05, 2026",
+    "time": "16:00",
+    "stadium": "New York/New Jersey Stadium",
+    "teams": ["Winner 76", "Winner 78"],
+    "tickets": {
+      "Category 1": 980.00,
+      "Category 2": 785.00,
+      "Category 3": 365.00,
+      "Easy Access Standard - Category 1": 980.00,
+      "Easy Access Standard - Category 2": 785.00,
+      "Easy Access Standard - Category 3": 365.00
+    }
+  },
+  {
+    "match": 92,
+    "date": "Jul 05, 2026",
+    "time": "18:00",
+    "stadium": "Mexico City Stadium",
+    "teams": ["Winner 79", "Winner 80"],
+    "tickets": {
+      "Category 1": 885.00,
+      "Category 2": 625.00,
+      "Category 3": 350.00,
+      "Easy Access Standard - Category 1": 885.00,
+      "Easy Access Standard - Category 2": 625.00,
+      "Easy Access Standard - Category 3": 350.00
+    }
+  },
+  {
+    "match": 93,
+    "date": "Jul 06, 2026",
+    "time": "14:00",
+    "stadium": "Dallas Stadium",
+    "teams": ["Winner 83", "Winner 84"],
+    "tickets": {
+      "Category 1": 640.00,
+      "Category 2": 515.00,
+      "Category 3": 240.00,
+      "Easy Access Standard - Category 1": 640.00,
+      "Easy Access Standard - Category 2": 515.00,
+      "Easy Access Standard - Category 3": 240.00
+    }
+  },
+  {
+    "match": 94,
+    "date": "Jul 06, 2026",
+    "time": "17:00",
+    "stadium": "Seattle Stadium",
+    "teams": ["Winner 81", "Winner 82"],
+    "tickets": {
+      "Category 1": 695.00,
+      "Category 2": 565.00,
+      "Category 3": 270.00,
+      "Easy Access Standard - Category 1": 695.00,
+      "Easy Access Standard - Category 2": 565.00,
+      "Easy Access Standard - Category 3": 270.00
+    }
+  },
+  {
+    "match": 95,
+    "date": "Jul 07, 2026",
+    "time": "12:00",
+    "stadium": "Atlanta Stadium",
+    "teams": ["Winner 86", "Winner 88"],
+    "tickets": {
+      "Category 1": 735.00,
+      "Category 2": 580.00,
+      "Category 3": 270.00,
+      "Easy Access Standard - Category 1": 735.00,
+      "Easy Access Standard - Category 2": 580.00,
+      "Easy Access Standard - Category 3": 270.00
+    }
+  },
+  {
+    "match": 96,
+    "date": "Jul 07, 2026",
+    "time": "13:00",
+    "stadium": "BC Place Vancouver",
+    "teams": ["Winner 85", "Winner 87"],
+    "tickets": {
+      "Category 1": 765.00,
+      "Category 2": 625.00,
+      "Category 3": 320.00,
+      "Easy Access Standard - Category 1": 765.00,
+      "Easy Access Standard - Category 2": 625.00,
+      "Easy Access Standard - Category 3": 320.00
+    }
+  },
+  {
+    "match": 97,
+    "date": "Jul 09, 2026",
+    "time": "16:00",
+    "stadium": "Boston Stadium",
+    "teams": ["Winner 89", "Winner 90"],
+    "tickets": {
+      "Category 1": 1270.00,
+      "Category 2": 890.00,
+      "Category 3": 650.00,
+      "Easy Access Standard - Category 1": 1270.00,
+      "Easy Access Standard - Category 2": 890.00,
+      "Easy Access Standard - Category 3": 650.00
+    }
+  },
+  {
+    "match": 98,
+    "date": "Jul 10, 2026",
+    "time": "12:00",
+    "stadium": "Los Angeles Stadium",
+    "teams": ["Winner 93", "Winner 94"],
+    "tickets": {
+      "Category 1": 1775.00,
+      "Category 2": 1220.00,
+      "Category 3": 800.00,
+      "Easy Access Standard - Category 1": 1775.00,
+      "Easy Access Standard - Category 2": 1220.00,
+      "Easy Access Standard - Category 3": 800.00
+    }
+  },
+  {
+    "match": 99,
+    "date": "Jul 11, 2026",
+    "time": "17:00",
+    "stadium": "Miami Stadium",
+    "teams": ["Winner 91", "Winner 92"],
+    "tickets": {
+      "Category 1": 1445.00,
+      "Category 2": 1005.00,
+      "Category 3": 735.00,
+      "Easy Access Standard - Category 1": 1445.00,
+      "Easy Access Standard - Category 2": 1005.00,
+      "Easy Access Standard - Category 3": 735.00
+    }
+  },
+  {
+    "match": 100,
+    "date": "Jul 11, 2026",
+    "time": "20:00",
+    "stadium": "Kansas City Stadium",
+    "teams": ["Winner 95", "Winner 96"],
+    "tickets": {
+      "Category 1": 1265.00,
+      "Category 2": 940.00,
+      "Category 3": 535.00,
+      "Easy Access Standard - Category 1": 1265.00,
+      "Easy Access Standard - Category 2": 940.00,
+      "Easy Access Standard - Category 3": 535.00
+    }
+  },
+  {
+    "match": 101,
+    "date": "Jul 14, 2026",
+    "time": "14:00",
+    "stadium": "Dallas Stadium",
+    "teams": ["Winner 97", "Winner 98"],
+    "tickets": {
+      "Category 1": 3295.00,
+      "Category 2": 2350.00,
+      "Category 3": 930.00,
+      "Easy Access Standard - Category 1": 3295.00,
+      "Easy Access Standard - Category 2": 2350.00,
+      "Easy Access Standard - Category 3": 930.00
+    }
+  },
+  {
+    "match": 102,
+    "date": "Jul 15, 2026",
+    "time": "15:00",
+    "stadium": "Atlanta Stadium",
+    "teams": ["Winner 99", "Winner 100"],
+    "tickets": {
+      "Category 1": 3040.00,
+      "Category 2": 2525.00,
+      "Category 3": 905.00,
+      "Easy Access Standard - Category 1": 3040.00,
+      "Easy Access Standard - Category 2": 2525.00,
+      "Easy Access Standard - Category 3": 905.00
+    }
+  },
+  {
+    "match": 103,
+    "date": "Jul 18, 2026",
+    "time": "17:00",
+    "stadium": "Miami Stadium",
+    "teams": ["Bronze 101", "Bronze 102"],
+    "tickets": {
+      "Category 1": 1125.00,
+      "Category 2": 865.00,
+      "Category 3": 455.00,
+      "Easy Access Standard - Category 1": 1125.00,
+      "Easy Access Standard - Category 2": 865.00,
+      "Easy Access Standard - Category 3": 455.00
+    }
+  },
+  {
+    "match": 104,
+    "date": "Jul 19, 2026",
+    "time": "15:00",
+    "stadium": "New York/New Jersey Stadium",
+    "teams": ["Winner 101", "Winner 102"],
+    "tickets": {
+      "Category 1": 8680.00,
+      "Category 2": 5575.00,
+      "Category 3": 4185.00,
+      "Easy Access Standard - Category 1": 8680.00,
+      "Easy Access Standard - Category 2": 5575.00,
+      "Easy Access Standard - Category 3": 4185.00
+    }
+  }
+]
