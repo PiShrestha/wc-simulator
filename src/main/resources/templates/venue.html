@@ -15,59 +15,121 @@
       th {
         background: #f4f6f8;
         text-align: left;
+        font-weight: 600;
       }
       h2,
       h3 {
         margin-top: 24px;
       }
+      .pairing-row {
+        transition: background-color 0.15s ease;
+      }
+      .pairing-row:hover {
+        background-color: #f9fafb;
+      }
+      .filter-panel {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 12px;
+        margin: 12px 0;
+        display: grid;
+        grid-template-columns: auto auto auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+      .filter-panel select,
+      .filter-panel input {
+        padding: 6px 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .filter-panel label {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .filter-stats {
+        font-size: 12px;
+        color: #6b7280;
+      }
     </style>
     <h2 th:text="${'Matches in ' + city}"></h2>
 
-    <form action="/venue" method="get" style="margin: 12px 0">
-      <input type="hidden" name="city" th:value="${city}" />
-      <label style="font-weight: 600; margin-right: 8px">Stage Filter</label>
-      <select name="stage" th:value="${stageFilter}" style="padding: 4px 8px">
-        <option
-          value=""
-          th:selected="${stageFilter == null || stageFilter == ''}"
-        >
-          All
-        </option>
-        <option
-          value="Round of 32"
-          th:selected="${stageFilter == 'Round of 32'}"
-        >
-          Round of 32
-        </option>
-        <option
-          value="Round of 16"
-          th:selected="${stageFilter == 'Round of 16'}"
-        >
-          Round of 16
-        </option>
-        <option
-          value="Quarterfinal"
-          th:selected="${stageFilter == 'Quarterfinal'}"
-        >
-          Quarterfinal
-        </option>
-        <option value="Semifinal" th:selected="${stageFilter == 'Semifinal'}">
-          Semifinal
-        </option>
-        <option
-          value="Third Place"
-          th:selected="${stageFilter == 'Third Place'}"
-        >
-          Third Place
-        </option>
-        <option value="Final" th:selected="${stageFilter == 'Final'}">
-          Final
-        </option>
-      </select>
-      <button type="submit" style="margin-left: 8px; padding: 4px 10px">
-        Apply
-      </button>
-    </form>
+    <div class="filter-panel">
+      <form action="/venue" method="get" style="display: contents">
+        <input type="hidden" name="city" th:value="${city}" />
+        <label>Stage</label>
+        <select name="stage" th:value="${stageFilter}">
+          <option
+            value=""
+            th:selected="${stageFilter == null || stageFilter == ''}"
+          >
+            All
+          </option>
+          <option
+            value="Round of 32"
+            th:selected="${stageFilter == 'Round of 32'}"
+          >
+            Round of 32
+          </option>
+          <option
+            value="Round of 16"
+            th:selected="${stageFilter == 'Round of 16'}"
+          >
+            Round of 16
+          </option>
+          <option
+            value="Quarterfinal"
+            th:selected="${stageFilter == 'Quarterfinal'}"
+          >
+            Quarterfinal
+          </option>
+          <option value="Semifinal" th:selected="${stageFilter == 'Semifinal'}">
+            Semifinal
+          </option>
+          <option
+            value="Third Place"
+            th:selected="${stageFilter == 'Third Place'}"
+          >
+            Third Place
+          </option>
+          <option value="Final" th:selected="${stageFilter == 'Final'}">
+            Final
+          </option>
+        </select>
+
+        <label>Teams</label>
+        <select name="teamFilter" th:value="${teamFilter}">
+          <option
+            value="qualifying"
+            th:selected="${teamFilter == 'qualifying'}"
+          >
+            Show all qualifying (Top 12 or South American)
+          </option>
+          <option value="top12" th:selected="${teamFilter == 'top12'}">
+            Only show Top 12 teams
+          </option>
+          <option
+            value="south_american"
+            th:selected="${teamFilter == 'south_american'}"
+          >
+            Only show South American teams
+          </option>
+          <option value="all" th:selected="${teamFilter == 'all'}">
+            Show all matches
+          </option>
+        </select>
+
+        <button type="submit" style="padding: 6px 12px; cursor: pointer">
+          Filter
+        </button>
+      </form>
+      <span
+        class="filter-stats"
+        th:text="${#lists.size(pairings)} + ' matchups'"
+      ></span>
+    </div>
 
     <table border="1">
       <tr>
@@ -96,6 +158,12 @@
     </ul>
 
     <h3>Possible Matchups</h3>
+    <div style="margin: 12px 0">
+      <span
+        class="filter-stats"
+        th:text="${#lists.size(pairings)} + ' matchups shown'"
+      ></span>
+    </div>
     <table border="1">
       <tr>
         <th>Match ID</th>
@@ -108,7 +176,7 @@
         <th>Away Slot</th>
         <th>Avg Rank</th>
       </tr>
-      <tr th:each="p : ${pairings}">
+      <tr th:each="p : ${pairings}" class="pairing-row">
         <td th:text="${p.matchId}"></td>
         <td th:text="${p.stage}"></td>
         <td th:text="${p.date}"></td>
@@ -122,5 +190,9 @@
     </table>
 
     <a href="/">Back</a>
+
+    <script>
+      // Intentionally left minimal: filtering is handled server-side via toggles, no text input required.
+    </script>
   </body>
 </html>

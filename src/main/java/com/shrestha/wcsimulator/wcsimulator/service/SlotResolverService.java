@@ -3,6 +3,7 @@ package com.shrestha.wcsimulator.wcsimulator.service;
 import com.shrestha.wcsimulator.wcsimulator.domain.KnockoutMatch;
 import com.shrestha.wcsimulator.wcsimulator.domain.MatchSlot;
 import com.shrestha.wcsimulator.wcsimulator.domain.Team;
+import com.shrestha.wcsimulator.wcsimulator.provider.FifaRankProvider;
 import com.shrestha.wcsimulator.wcsimulator.provider.GroupStageProvider;
 import com.shrestha.wcsimulator.wcsimulator.provider.KnockoutStageProvider;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,16 @@ public class SlotResolverService {
 
     private final GroupStageProvider groupProvider;
     private final KnockoutStageProvider knockoutProvider;
+    private final FifaRankProvider rankProvider;
 
     public SlotResolverService(
             GroupStageProvider groupProvider,
-            KnockoutStageProvider knockoutProvider
+            KnockoutStageProvider knockoutProvider,
+            FifaRankProvider rankProvider
     ) {
         this.groupProvider = groupProvider;
         this.knockoutProvider = knockoutProvider;
+        this.rankProvider = rankProvider;
     }
 
     /**
@@ -36,7 +40,11 @@ public class SlotResolverService {
         // Group-based slot (e.g., 1A, 2B, 3C)
         if (code.matches("[123][A-Z]")) {
             String group = code.substring(1);
-            return new HashSet<>(groupProvider.groups().getOrDefault(group, List.of()));
+            int pos = Integer.parseInt(code.substring(0, 1));
+            // Filter out Top-12 teams when the slot represents 3rd-place eligibility
+            return groupProvider.groups().getOrDefault(group, List.of()).stream()
+                    .filter(t -> allowForPosition(pos, t))
+                    .collect(java.util.stream.Collectors.toCollection(HashSet::new));
         }
 
         // Aggregated third-place pool (e.g., 3ABCDF): include all teams from listed groups
@@ -45,7 +53,9 @@ public class SlotResolverService {
             Set<Team> teams = new HashSet<>();
             for (char ch : groups.toCharArray()) {
                 String g = String.valueOf(ch);
-                teams.addAll(groupProvider.groups().getOrDefault(g, List.of()));
+                groupProvider.groups().getOrDefault(g, List.of()).stream()
+                        .filter(t -> allowForPosition(3, t))
+                        .forEach(teams::add);
             }
             return teams;
         }
@@ -80,6 +90,14 @@ public class SlotResolverService {
                 .stream()
                 .filter(m -> m.getMatchId() == id)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Unknown knockout match id: " + id));
+    }
+
+    private boolean allowForPosition(int position, Team team) {
+        if (team == null) return false;
+        // Top-12 teams cannot qualify through 3rd/4th-place slots
+        boolean isTop12 = rankProvider.isTop12(team.getName());
+        if (position >= 3 && isTop12) return false;
+        return true;
     }
 }

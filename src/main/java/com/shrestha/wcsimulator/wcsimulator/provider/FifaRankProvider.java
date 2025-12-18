@@ -3,13 +3,17 @@ package com.shrestha.wcsimulator.wcsimulator.provider;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class FifaRankProvider {
     private final Map<String, Integer> ranks = new HashMap<>();
+    private final Set<String> southAmericanTeams = new HashSet<>();
 
     public FifaRankProvider() {
+        initializeSouthAmericanTeams();
         // Top 50
         put("Spain", 1);
         put("Argentina", 2);
@@ -81,8 +85,32 @@ public class FifaRankProvider {
 
     private void put(String name, int rank) { ranks.put(name.toLowerCase(), rank); }
 
+    private void initializeSouthAmericanTeams() {
+        southAmericanTeams.add("argentina");
+        southAmericanTeams.add("brazil");
+        southAmericanTeams.add("uruguay");
+        southAmericanTeams.add("colombia");
+        southAmericanTeams.add("venezuela");
+        southAmericanTeams.add("ecuador");
+        southAmericanTeams.add("paraguay");
+        southAmericanTeams.add("peru");
+        southAmericanTeams.add("chile");
+        southAmericanTeams.add("bolivia");
+        southAmericanTeams.add("guyana");
+        southAmericanTeams.add("suriname");
+    }
+
     public int rankOf(String name) {
         if (name == null) return 999;
         return ranks.getOrDefault(name.toLowerCase(), 999);
+    }
+
+    public boolean isSouthAmerican(String teamName) {
+        if (teamName == null) return false;
+        return southAmericanTeams.contains(teamName.toLowerCase());
+    }
+
+    public boolean isTop12(String teamName) {
+        return rankOf(teamName) >= 1 && rankOf(teamName) <= 12;
     }
 }

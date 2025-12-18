@@ -47,6 +47,7 @@ public class VenueUIController {
     @GetMapping("/venue")
     public String venueMatches(@RequestParam String city,
                                @RequestParam(required = false) String stage,
+                               @RequestParam(required = false) String teamFilter,
                                Model model) {
         var allMatches = venueQueryService.getMatchesForVenue(city);
         var allPairings = venuePairingsService.pairingsForVenue(city);
@@ -56,15 +57,19 @@ public class VenueUIController {
 
         if (stage != null && !stage.isBlank()) {
             matches = allMatches.stream()
-                    .filter(m -> stage.equalsIgnoreCase(m.getStage()))
-                    .collect(java.util.stream.Collectors.toList());
+                .filter(m -> stage.equalsIgnoreCase(m.getStage()))
+                .collect(java.util.stream.Collectors.toList());
             pairings = allPairings.stream()
-                    .filter(p -> stage.equalsIgnoreCase(p.getStage()))
-                    .collect(java.util.stream.Collectors.toList());
+                .filter(p -> stage.equalsIgnoreCase(p.getStage()))
+                .collect(java.util.stream.Collectors.toList());
         }
+
+        String normalizedFilter = (teamFilter == null || teamFilter.isBlank()) ? "qualifying" : teamFilter;
+        pairings = venuePairingsService.filterPairingsByTeamType(pairings, normalizedFilter);
 
         model.addAttribute("city", city);
         model.addAttribute("stageFilter", stage == null ? "" : stage);
+        model.addAttribute("teamFilter", normalizedFilter);
         model.addAttribute("matches", matches);
         model.addAttribute("teams", venueTeamsService.teamsForVenue(city));
         model.addAttribute("pairings", pairings);

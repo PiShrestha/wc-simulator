@@ -1,18 +1,271 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: linear-gradient(135deg, #0f172a, #0b3a5c);
+        --panel: #0f172a;
+        --card: #111827;
+        --muted: #9ca3af;
+        --text: #e5e7eb;
+        --accent: #22d3ee;
+        --accent-2: #f59e0b;
+        --border: rgba(255, 255, 255, 0.08);
+        --shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Manrope", "Helvetica Neue", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 24px;
+      }
+
+      .shell {
+        width: min(1080px, 100%);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 32px;
+      }
+
+      .header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .badge {
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(34, 211, 238, 0.12);
+        color: var(--accent);
+        border: 1px solid rgba(34, 211, 238, 0.4);
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        letter-spacing: -0.3px;
+      }
+
+      p.lead {
+        margin: 6px 0 0;
+        color: var(--muted);
+        max-width: 720px;
+        line-height: 1.5;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 18px;
+        margin-top: 24px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      .card h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+
+      .card p {
+        margin: 0 0 14px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      form {
+        display: grid;
+        gap: 12px;
+      }
+
+      label {
+        font-weight: 700;
+        color: #cbd5e1;
+      }
+
+      select {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 15px;
+        outline: none;
+      }
+
+      select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.25);
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 120ms ease, box-shadow 120ms ease,
+          background 120ms ease;
+      }
+
+      .btn.primary {
+        background: linear-gradient(120deg, var(--accent), #1ea6c8);
+        color: #0b1220;
+        box-shadow: 0 10px 24px rgba(34, 211, 238, 0.35);
+      }
+
+      .btn.secondary {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .pill-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+
+      .pill {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      @media (max-width: 720px) {
+        body {
+          padding: 18px 14px;
+        }
+        .shell {
+          padding: 22px;
+        }
+        h1 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
   <body>
-    <h2>Select a Venue</h2>
+    <div class="shell">
+      <div class="header">
+        <div class="title">
+          <div class="badge">Tournament MVP</div>
+          <div>
+            <h1>World Cup Path Explorer</h1>
+            <p class="lead">
+              Pick a host city to see every possible matchup that could land
+              there, then hop into the simulator to tweak group finishes.
+            </p>
+          </div>
+        </div>
+        <div class="pill-row">
+          <div class="pill">Slot resolution: recursive</div>
+          <div class="pill">Filters: Top-12 / South America</div>
+          <div class="pill">Sorted by avg rank</div>
+        </div>
+      </div>
 
-    <form action="/venue" method="get">
-      <select name="city">
-        <option th:each="v : ${venues}" th:value="${v}" th:text="${v}"></option>
-      </select>
-      <button type="submit">View Matches</button>
-    </form>
+      <div class="grid">
+        <div class="card">
+          <h3>View matches by venue</h3>
+          <p>
+            Select a city to list hosted knockout matches and every legal
+            pairing for each slot.
+          </p>
+          <form action="/venue" method="get">
+            <label for="city">Host city</label>
+            <select name="city" id="city">
+              <option
+                th:each="v : ${venues}"
+                th:value="${v}"
+                th:text="${v}"
+              ></option>
+            </select>
+            <div class="actions">
+              <button type="submit" class="btn primary">View matches</button>
+            </div>
+          </form>
+        </div>
 
-    <p>
-      <a href="/simulator">Open Bracket Simulator</a>
-      — tweak group orders and see projected matchups.
-    </p>
+        <div class="card">
+          <h3>Bracket simulator</h3>
+          <p>
+            Drag-and-drop group orders, then project who advances into each slot
+            for your chosen venue.
+          </p>
+          <div class="actions">
+            <a class="btn secondary" href="/simulator">Open simulator</a>
+            <a class="btn primary" href="/venue?city=Philadelphia"
+              >Quick demo</a
+            >
+          </div>
+          <div class="pill-row" style="margin-top: 12px">
+            <div class="pill">No typing team names</div>
+            <div class="pill">Toggle Top-12 / SA</div>
+            <div class="pill">Shareable venue links</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

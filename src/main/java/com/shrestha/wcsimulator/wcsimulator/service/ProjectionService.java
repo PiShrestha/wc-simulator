@@ -61,6 +61,7 @@ public class ProjectionService {
                 );
                     })
                     .filter(Objects::nonNull)
+                    .filter(p -> qualifies(p, "qualifying"))
                     .sorted((p1, p2) -> {
                         int so1 = stageOrder(p1.getStage());
                         int so2 = stageOrder(p2.getStage());
@@ -173,7 +174,15 @@ public class ProjectionService {
             int pos = Integer.parseInt(m.group(1));
             String group = m.group(2);
             List<String> ranking = orderedGroups.getOrDefault(group, List.of());
-            if (ranking.size() >= pos) return team(ranking.get(pos - 1), group);
+            if (ranking.size() >= pos) {
+                String candidate = ranking.get(pos - 1);
+                if (pos >= 3 && rankProvider.isTop12(candidate)) {
+                    // Skip Top-12 teams that did not win or finish runner-up
+                    String fallback = firstNonTop12From(ranking, pos - 1);
+                    return team(fallback == null ? "TBD" : fallback, group);
+                }
+                return team(candidate, group);
+            }
             return team("TBD", group);
         }
 
@@ -188,7 +197,7 @@ public class ProjectionService {
                 if (ranking.size() >= 3) {
                     String candidate = ranking.get(2);
                     int r = rankProvider.rankOf(candidate);
-                    if (r < bestRank) { bestRank = r; best = candidate; }
+                    if (!rankProvider.isTop12(candidate) && r < bestRank) { bestRank = r; best = candidate; }
                 }
             }
             return team(best == null ? "TBD" : best, "");
@@ -233,5 +242,46 @@ public class ProjectionService {
         t.setFifaRank(rankProvider.rankOf(name));
         t.setPoints(0);
         return t;
+    }
+
+    private String firstNonTop12From(List<String> ranking, int startIdx) {
+        for (int i = startIdx; i < ranking.size(); i++) {
+            String candidate = ranking.get(i);
+            if (!rankProvider.isTop12(candidate)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private boolean qualifies(PairingView pairing, String mode) {
+        String home = stripRankLabel(pairing.getHome());
+        String away = stripRankLabel(pairing.getAway());
+
+        boolean homeTop12 = rankProvider.isTop12(home);
+        boolean awayTop12 = rankProvider.isTop12(away);
+        boolean homeSA = rankProvider.isSouthAmerican(home);
+        boolean awaySA = rankProvider.isSouthAmerican(away);
+
+        boolean hasQualified = homeTop12 || awayTop12 || homeSA || awaySA;
+
+        switch (mode) {
+            case "top12":
+                return homeTop12 || awayTop12;
+            case "south_american":
+                return homeSA || awaySA;
+            case "all":
+                return true;
+            case "qualifying":
+            default:
+                return hasQualified;
+        }
+    }
+
+    private String stripRankLabel(String label) {
+        if (label == null) return null;
+        int open = label.lastIndexOf('(');
+        if (open > 0) return label.substring(0, open).trim();
+        return label;
     }
 }

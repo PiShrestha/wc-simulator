@@ -35,9 +35,10 @@ public class VenuePairingsService {
         provider.matches().stream()
                 .filter(m -> m.getCity().equalsIgnoreCase(city))
                 .forEach(m -> {
-                    // Generate broad candidate sets: anyone from the relevant groups can finish required positions
-                    Set<Team> home = resolver.resolveSlot(m.getHomeSlot());
-                    Set<Team> away = resolver.resolveSlot(m.getAwaySlot());
+                // Candidate sets: for group/third slots include all teams; for W/L choose rank-based winner/loser
+                java.util.Map<String, java.util.List<String>> orderedGroups = defaultOrderedGroups();
+                Set<Team> home = candidatesForSlot(m.getHomeSlot(), orderedGroups);
+                Set<Team> away = candidatesForSlot(m.getAwaySlot(), orderedGroups);
 
                     // Cross-product pairings
                     for (Team h : home) {
@@ -53,6 +54,10 @@ public class VenuePairingsService {
                             double avg = (hr + ar) / 2.0;
                             String hOrigin = originForTeam(m.getHomeSlot().getCode(), h);
                             String aOrigin = originForTeam(m.getAwaySlot().getCode(), a);
+                            // Filter: top 12 teams should not be shown as third-place requirements
+                            if (isTop12Third(hr, hOrigin) || isTop12Third(ar, aOrigin)) {
+                                continue;
+                            }
                             out.add(new PairingView(
                                     hLabel,
                                     aLabel,
@@ -189,51 +194,55 @@ public class VenuePairingsService {
         return 9;
     }
 
+    private boolean isTop12Third(int rank, String origin) {
+        if (origin == null) return false;
+        boolean isThirdOrFourth = origin.startsWith("3") || origin.startsWith("4");
+        return isThirdOrFourth && rank > 0 && rank <= 12;
+    }
+
     private Set<Team> candidatesForSlot(com.shrestha.wcsimulator.wcsimulator.domain.MatchSlot slot,
                                         java.util.Map<String, java.util.List<String>> orderedGroups) {
         String code = slot.getCode();
         java.util.Set<Team> set = new java.util.LinkedHashSet<>();
         if (code.matches("[123][A-Z]")) {
-            int pos = Character.digit(code.charAt(0), 10);
-            String g = String.valueOf(code.charAt(1));
-            var ranking = orderedGroups.getOrDefault(g, java.util.List.of());
-            if (ranking.size() >= pos) {
-                set.add(buildTeam(ranking.get(pos - 1), g));
-            }
+            // Broad assumption: anyone in the group could finish in the required position
+            set.addAll(resolver.resolveSlot(slot));
             return set;
         }
         if (code.matches("3[A-Z]{2,}")) {
-            String letters = code.substring(1);
-            for (char ch : letters.toCharArray()) {
-                String g = String.valueOf(ch);
-                var ranking = orderedGroups.getOrDefault(g, java.util.List.of());
-                if (ranking.size() >= 3) {
-                    set.add(buildTeam(ranking.get(2), g));
-                }
-            }
+            // Broad assumption: anyone in pooled groups could be the third-place entrant
+            set.addAll(resolver.resolveSlot(slot));
             return set;
         }
         if (code.startsWith("W") || code.startsWith("L")) {
             int id = Integer.parseInt(code.substring(1));
             var child = provider.matches().stream()
-                    .filter(mm -> mm.getMatchId() == id)
-                    .findFirst().orElse(null);
+                .filter(mm -> mm.getMatchId() == id)
+                .findFirst().orElse(null);
             if (child == null) return set;
-            java.util.Set<Team> left = candidatesForSlot(child.getHomeSlot(), orderedGroups);
-            java.util.Set<Team> right = candidatesForSlot(child.getAwaySlot(), orderedGroups);
-            if (left.isEmpty() || right.isEmpty()) return set;
-            // Determine winner/loser by FIFA rank (lower is better)
-            Team lh = left.iterator().next();
-            Team rh = right.iterator().next();
-            int rL = rankProvider.rankOf(lh.getName());
-            int rR = rankProvider.rankOf(rh.getName());
-            boolean homeWins = rL <= rR;
-            Team winner = homeWins ? lh : rh;
-            Team loser = homeWins ? rh : lh;
-            set.add(code.startsWith("W") ? winner : loser);
+            // Include ALL possible participants from both branches. Winners/losers can be any of them.
+            java.util.Set<Team> leftCandidates = candidatesForSlot(child.getHomeSlot(), orderedGroups);
+            java.util.Set<Team> rightCandidates = candidatesForSlot(child.getAwaySlot(), orderedGroups);
+            set.addAll(leftCandidates);
+            set.addAll(rightCandidates);
             return set;
         }
         return set;
+    }
+
+    private Team bestByRank(java.util.Set<Team> teams, boolean chooseWorst) {
+        Team best = null;
+        int bestRank = chooseWorst ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        for (Team t : teams) {
+            int r = rankProvider.rankOf(t.getName());
+            if (r <= 0) r = 999;
+            if (chooseWorst) {
+                if (r > bestRank) { bestRank = r; best = t; }
+            } else {
+                if (r < bestRank) { bestRank = r; best = t; }
+            }
+        }
+        return best != null ? best : teams.iterator().next();
     }
 
     private Team buildTeam(String name, String group) {
@@ -262,5 +271,55 @@ public class VenuePairingsService {
     private boolean equalsIgnoreCase(String a, String b) {
         if (a == null || b == null) return false;
         return a.equalsIgnoreCase(b);
+    }
+
+    public List<PairingView> filterPairingsByTeamType(List<PairingView> pairings, String filterType) {
+        String mode = normalizeFilter(filterType);
+
+        return pairings.stream()
+                .filter(p -> qualifies(p, mode))
+                .collect(Collectors.toList());
+    }
+
+    private String stripRankLabel(String label) {
+        if (label == null) return null;
+        int open = label.lastIndexOf('(');
+        if (open > 0) return label.substring(0, open).trim();
+        return label;
+    }
+
+    private boolean qualifies(PairingView pairing, String mode) {
+        String home = stripRankLabel(pairing.getHome());
+        String away = stripRankLabel(pairing.getAway());
+
+        boolean homeTop12 = rankProvider.isTop12(home);
+        boolean awayTop12 = rankProvider.isTop12(away);
+        boolean homeSA = rankProvider.isSouthAmerican(home);
+        boolean awaySA = rankProvider.isSouthAmerican(away);
+
+        boolean hasQualified = homeTop12 || awayTop12 || homeSA || awaySA;
+
+        switch (mode) {
+            case "top12":
+                return homeTop12 || awayTop12;
+            case "south_american":
+                return homeSA || awaySA;
+            case "all":
+                return true;
+            case "qualifying":
+            default:
+                return hasQualified;
+        }
+    }
+
+    private String normalizeFilter(String filterType) {
+        if (filterType == null || filterType.isBlank()) return "qualifying";
+        String t = filterType.trim().toLowerCase();
+        if (t.equals("top12_sa")) return "qualifying";
+        if (t.equals("top12")) return "top12";
+        if (t.equals("south_american")) return "south_american";
+        if (t.equals("all")) return "all";
+        if (t.equals("qualifying")) return "qualifying";
+        return "qualifying";
     }
 }

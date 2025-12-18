@@ -75,6 +75,26 @@
         color: #3730a3;
         font-size: 12px;
       }
+      .dnd-item {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 6px 8px;
+        margin: 4px 0;
+        cursor: grab;
+        user-select: none;
+        transition: all 0.15s ease;
+      }
+      .dnd-item:hover {
+        background: #eef2ff;
+        border-color: #3730a3;
+      }
+      .dnd-item:active {
+        cursor: grabbing;
+        background: #dbeafe;
+        transform: scale(1.02);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
     </style>
 
     <h2 style="margin: 0 0 16px">Bracket Simulator</h2>
@@ -83,10 +103,10 @@
       <div class="card">
         <h3>Inputs</h3>
         <div class="hint">
-          Pick a city and adjust each group order (comma-separated). First item
-          is 1st place, then 2nd, etc.
+          Pick a city, then drag teams within each group to set finish order.
+          Top to bottom = 1st to 4th.
         </div>
-        <form action="/simulator" method="post">
+        <form action="/simulator" method="post" id="sim-form">
           <div class="row">
             <label>City</label>
             <select name="city" style="width: 220px">
@@ -100,15 +120,34 @@
           </div>
 
           <div class="hint">Groups A–L</div>
-          <div th:each="entry : ${groups}" class="row">
-            <label th:text="'Group ' + ${entry.key}"></label>
-            <input
-              type="text"
-              th:name="${'order_' + entry.key}"
-              th:value="${#strings.listJoin(entry.value, ', ')}"
-              style="flex: 1"
-              placeholder="Team1, Team2, Team3, Team4"
-            />
+          <div
+            th:each="entry : ${groups}"
+            class="row"
+            style="align-items: flex-start"
+          >
+            <label
+              th:text="'Group ' + ${entry.key}"
+              style="margin-top: 6px"
+            ></label>
+            <div style="flex: 1">
+              <ul
+                class="dnd-list"
+                th:attr="data-group=${entry.key}"
+                style="list-style: none; padding: 0; margin: 0"
+              >
+                <li
+                  th:each="team : ${entry.value}"
+                  class="dnd-item"
+                  draggable="true"
+                  th:text="${team}"
+                ></li>
+              </ul>
+              <input
+                type="hidden"
+                th:name="${'order_' + entry.key}"
+                th:value="${#strings.listJoin(entry.value, ', ')}"
+              />
+            </div>
           </div>
 
           <div class="actions">
@@ -149,5 +188,70 @@
         </table>
       </div>
     </div>
+
+    <script>
+      // Simple drag-and-drop reorder for group lists
+      (function () {
+        const lists = document.querySelectorAll(".dnd-list");
+        let dragEl = null;
+
+        lists.forEach((list) => {
+          list.addEventListener("dragstart", (e) => {
+            if (e.target && e.target.classList.contains("dnd-item")) {
+              dragEl = e.target;
+              e.dataTransfer.effectAllowed = "move";
+            }
+          });
+          list.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            const target = e.target;
+            if (!dragEl || !target || !target.classList.contains("dnd-item"))
+              return;
+            const rect = target.getBoundingClientRect();
+            const before = e.clientY - rect.top < rect.height / 2;
+            target.parentNode.insertBefore(
+              dragEl,
+              before ? target : target.nextSibling
+            );
+          });
+          list.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dragEl = null;
+          });
+        });
+
+        // On submit, serialize each list into corresponding hidden input
+        const form = document.getElementById("sim-form");
+        form.addEventListener("submit", () => {
+          document.querySelectorAll(".dnd-list").forEach((list) => {
+            const group = list.getAttribute("data-group");
+            const names = Array.from(list.querySelectorAll(".dnd-item"))
+              .map((li) => li.textContent.trim())
+              .filter(Boolean);
+            const input = form.querySelector(`input[name="order_${group}"]`);
+            if (input) input.value = names.join(", ");
+          });
+        });
+      })();
+
+      // Light styling for draggable items
+      const style = document.createElement("style");
+      style.textContent = `
+          .dnd-item-dragging { opacity: 0.5; }
+        `;
+      document.head.appendChild(style);
+
+      // Add visual feedback on drag
+      document.addEventListener("dragstart", (e) => {
+        if (e.target && e.target.classList.contains("dnd-item")) {
+          e.target.classList.add("dnd-item-dragging");
+        }
+      });
+      document.addEventListener("dragend", (e) => {
+        if (e.target && e.target.classList.contains("dnd-item")) {
+          e.target.classList.remove("dnd-item-dragging");
+        }
+      });
+    </script>
   </body>
 </html>
