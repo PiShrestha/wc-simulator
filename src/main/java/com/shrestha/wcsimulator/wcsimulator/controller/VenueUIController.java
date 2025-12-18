@@ -45,14 +45,29 @@ public class VenueUIController {
     }
 
     @GetMapping("/venue")
-    public String venueMatches(@RequestParam String city, Model model) {
+    public String venueMatches(@RequestParam String city,
+                               @RequestParam(required = false) String stage,
+                               Model model) {
+        var allMatches = venueQueryService.getMatchesForVenue(city);
+        var allPairings = venuePairingsService.pairingsForVenue(city);
+
+        List<com.shrestha.wcsimulator.wcsimulator.dto.MatchView> matches = allMatches;
+        List<com.shrestha.wcsimulator.wcsimulator.dto.PairingView> pairings = allPairings;
+
+        if (stage != null && !stage.isBlank()) {
+            matches = allMatches.stream()
+                    .filter(m -> stage.equalsIgnoreCase(m.getStage()))
+                    .collect(java.util.stream.Collectors.toList());
+            pairings = allPairings.stream()
+                    .filter(p -> stage.equalsIgnoreCase(p.getStage()))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
         model.addAttribute("city", city);
-        model.addAttribute("matches",
-                venueQueryService.getMatchesForVenue(city));
-        // Add possible teams for the venue (MVP path-resolution)
+        model.addAttribute("stageFilter", stage == null ? "" : stage);
+        model.addAttribute("matches", matches);
         model.addAttribute("teams", venueTeamsService.teamsForVenue(city));
-        // Add possible pairings for each match hosted at the venue
-        model.addAttribute("pairings", venuePairingsService.pairingsForVenue(city));
+        model.addAttribute("pairings", pairings);
         return "venue";
     }
 }

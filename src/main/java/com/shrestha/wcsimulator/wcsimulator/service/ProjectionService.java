@@ -32,29 +32,45 @@ public class ProjectionService {
     }
 
         public List<PairingView> projectedPairingsForVenue(String city, Map<String, List<String>> orderedGroups) {
-        return knockoutProvider.matches().stream()
+            return knockoutProvider.matches().stream()
             .filter(m -> m.getCity().equalsIgnoreCase(city))
             .map(m -> {
                 Team ht = projectedTeamForSlot(m.getHomeSlot(), orderedGroups);
                 Team at = projectedTeamForSlot(m.getAwaySlot(), orderedGroups);
+                        if (ht != null && at != null && equalsIgnoreCase(ht.getName(), at.getName())) {
+                            // Skip unrealistic self-versus-self projections
+                            return null;
+                        }
                 String h = labelWithRank(nameOf(ht));
                 String a = labelWithRank(nameOf(at));
                 int hr = rankProvider.rankOf(ht == null ? null : ht.getName());
                 int ar = rankProvider.rankOf(at == null ? null : at.getName());
                 double avg = (hr + ar) / 2.0;
+                        String hOrigin = projectedOriginSlot(m.getHomeSlot(), orderedGroups, ht);
+                        String aOrigin = projectedOriginSlot(m.getAwaySlot(), orderedGroups, at);
                 return new PairingView(
                     h,
                     a,
-                    m.getHomeSlot().getCode(),
-                    m.getAwaySlot().getCode(),
+                                hOrigin,
+                                aOrigin,
                     m.getStage(),
                     m.getDate(),
                     m.getCity(),
                     avg,
                     m.getMatchId()
                 );
-            })
-            .collect(Collectors.toList());
+                    })
+                    .filter(Objects::nonNull)
+                    .sorted((p1, p2) -> {
+                        int so1 = stageOrder(p1.getStage());
+                        int so2 = stageOrder(p2.getStage());
+                        int cmp = Integer.compare(so1, so2);
+                        if (cmp != 0) return cmp;
+                        cmp = Double.compare(p1.getAvgRank(), p2.getAvgRank());
+                        if (cmp != 0) return cmp;
+                        return Integer.compare(p1.getMatchId(), p2.getMatchId());
+                    })
+                    .collect(Collectors.toList());
         }
 
     private String nameOf(Team t) { return t == null ? "TBD" : t.getName(); }
@@ -62,6 +78,91 @@ public class ProjectionService {
         int r = rankProvider.rankOf(name);
         String rs = r >= 1 && r < 999 ? String.valueOf(r) : "?";
         return name + " (" + rs + ")";
+    }
+
+    private int stageOrder(String stage) {
+        if (stage == null) return 99;
+        switch (stage) {
+            case "Round of 32": return 1;
+            case "Round of 16": return 2;
+            case "Quarterfinal": return 3;
+            case "Semifinal": return 4;
+            case "Third Place": return 5;
+            case "Final": return 6;
+            default: return 98;
+        }
+    }
+
+    private boolean equalsIgnoreCase(String a, String b) {
+        if (a == null || b == null) return false;
+        return a.equalsIgnoreCase(b);
+    }
+
+    // Compute the team-aware origin slot at the group stage for a given knockout slot.
+    // Examples: 1E -> 1E; 3ABCDF -> 3X for the target's group X; W74 -> origin of the winner/loser that matches target.
+    private String projectedOriginSlot(MatchSlot slot, Map<String, List<String>> orderedGroups, Team targetTeam) {
+        String code = slot.getCode();
+
+        Matcher m = GROUP_SLOT.matcher(code);
+        if (m.matches()) {
+            // Already a group slot like 1A, 2B, 3C
+            return code;
+        }
+
+        Matcher agg = THIRD_AGG.matcher(code);
+        if (agg.matches()) {
+            String letters = agg.group(1);
+            // If we know the target team and its group is among the pooled letters, use it
+            if (targetTeam != null && targetTeam.getGroupId() != null && targetTeam.getGroupId().length() == 1) {
+                String g = targetTeam.getGroupId();
+                if (letters.contains(g)) {
+                    return "3" + g;
+                }
+            }
+            // Fallback: choose the best-ranked 3rd among the pooled groups
+            String bestGroup = null;
+            int bestRank = Integer.MAX_VALUE;
+            for (char ch : letters.toCharArray()) {
+                String g = String.valueOf(ch);
+                List<String> ranking = orderedGroups.getOrDefault(g, List.of());
+                if (ranking.size() >= 3) {
+                    String candidate = ranking.get(2);
+                    int r = rankProvider.rankOf(candidate);
+                    if (r < bestRank) { bestRank = r; bestGroup = g; }
+                }
+            }
+            return bestGroup == null ? "3?" : ("3" + bestGroup);
+        }
+
+        if (code.startsWith("W") || code.startsWith("L")) {
+            int id = Integer.parseInt(code.substring(1));
+            KnockoutMatch match = findMatch(id);
+            Team h = projectedTeamForSlot(match.getHomeSlot(), orderedGroups);
+            Team a = projectedTeamForSlot(match.getAwaySlot(), orderedGroups);
+            // If targetTeam is known, trace the branch that yields that team
+            if (targetTeam != null) {
+                String tn = targetTeam.getName();
+                if (equalsIgnoreCase(tn, h == null ? null : h.getName())) {
+                    return projectedOriginSlot(match.getHomeSlot(), orderedGroups, targetTeam);
+                }
+                if (equalsIgnoreCase(tn, a == null ? null : a.getName())) {
+                    return projectedOriginSlot(match.getAwaySlot(), orderedGroups, targetTeam);
+                }
+            }
+            // Fallback: decide winner/loser by better rank and return that origin
+            int rh = rankProvider.rankOf(h == null ? null : h.getName());
+            int ra = rankProvider.rankOf(a == null ? null : a.getName());
+            boolean homeWins = rh <= ra;
+            String hOrigin = projectedOriginSlot(match.getHomeSlot(), orderedGroups, h);
+            String aOrigin = projectedOriginSlot(match.getAwaySlot(), orderedGroups, a);
+            if (code.startsWith("W")) {
+                return homeWins ? hOrigin : aOrigin;
+            } else {
+                return homeWins ? aOrigin : hOrigin;
+            }
+        }
+
+        return "?";
     }
 
     public Team projectedTeamForSlot(MatchSlot slot, Map<String, List<String>> orderedGroups) {

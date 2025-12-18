@@ -23,6 +23,52 @@
     </style>
     <h2 th:text="${'Matches in ' + city}"></h2>
 
+    <form action="/venue" method="get" style="margin: 12px 0">
+      <input type="hidden" name="city" th:value="${city}" />
+      <label style="font-weight: 600; margin-right: 8px">Stage Filter</label>
+      <select name="stage" th:value="${stageFilter}" style="padding: 4px 8px">
+        <option
+          value=""
+          th:selected="${stageFilter == null || stageFilter == ''}"
+        >
+          All
+        </option>
+        <option
+          value="Round of 32"
+          th:selected="${stageFilter == 'Round of 32'}"
+        >
+          Round of 32
+        </option>
+        <option
+          value="Round of 16"
+          th:selected="${stageFilter == 'Round of 16'}"
+        >
+          Round of 16
+        </option>
+        <option
+          value="Quarterfinal"
+          th:selected="${stageFilter == 'Quarterfinal'}"
+        >
+          Quarterfinal
+        </option>
+        <option value="Semifinal" th:selected="${stageFilter == 'Semifinal'}">
+          Semifinal
+        </option>
+        <option
+          value="Third Place"
+          th:selected="${stageFilter == 'Third Place'}"
+        >
+          Third Place
+        </option>
+        <option value="Final" th:selected="${stageFilter == 'Final'}">
+          Final
+        </option>
+      </select>
+      <button type="submit" style="margin-left: 8px; padding: 4px 10px">
+        Apply
+      </button>
+    </form>
+
     <table border="1">
       <tr>
         <th>Match ID</th>
