@@ -152,6 +152,8 @@ public class GroupStageProvider {
                 String[] options = entry.split("/");
                 List<String> out = new ArrayList<>(options.length);
                 for (String opt : options) out.add(opt.trim());
+                FifaRankProvider rankProvider = new FifaRankProvider();
+                out.sort(Comparator.comparingInt(rankProvider::rankOf));
                 return out;
         }
 

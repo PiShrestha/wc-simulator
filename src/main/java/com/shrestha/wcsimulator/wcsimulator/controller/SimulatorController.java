@@ -35,7 +35,7 @@ public class SimulatorController {
 
     @PostMapping("/simulator")
     public String runSimulator(@RequestParam Map<String, String> params, Model model) {
-        String city = params.getOrDefault("city", "Philadelphia");
+        String city = params.getOrDefault("city", "New Jersey");
         Map<String, List<String>> ordered = projectionService.defaultOrderedGroups();
         // Parse group orders from form fields like order_A = "Team1,Team2,Team3,Team4"
         for (String g : ordered.keySet()) {

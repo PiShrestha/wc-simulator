@@ -231,7 +231,16 @@ public class ProjectionService {
     public Map<String, List<String>> defaultOrderedGroups() {
         // Already keyed by single-letter group ids (A-L)
         Map<String, List<String>> ordered = new LinkedHashMap<>();
+        FifaRankProvider provider = new FifaRankProvider();
         groupProvider.groupStrings().forEach((k, v) -> ordered.put(k, new ArrayList<>(v)));
+        ordered.forEach((k, v) -> v.sort(Comparator.comparingInt(provider::rankOf)));
+        // Add rank labels to each team name (Does not work yet, needs to modify logic in the html)
+//        ordered.forEach((k, v) -> {
+//            for (int i = 0; i < v.size(); i++) {
+//                String team = v.get(i);
+//                v.set(i, team + " (" + provider.rankOf(team) + ")");
+//            }
+//        });
         return ordered;
     }
 
